@@ -7,8 +7,12 @@ __pycache__/
 data/raw/*
 !data/raw/.gitkeep
 !data/raw/df1_station_master.csv
+!data/raw/df3_availability.csv
 
-data/external/
+data/external/*
+!data/external/.gitkeep
+!data/external/MTA_NYCT_Subway_Elevator_and_Escalator_Availability__Beginning_2015_20260616.csv
+
 data/processed/
 
 outputs/*
