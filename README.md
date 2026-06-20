@@ -87,6 +87,8 @@ Open:
 
 [notebooks/colab_runner.ipynb](notebooks/colab_runner.ipynb)
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/jiayili6812/mta-elevator-risk/blob/main/notebooks/colab_runner.ipynb)
+
 The notebook:
 
 1. clones this GitHub repository,
