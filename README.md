@@ -184,7 +184,7 @@ queues, planning support, and triage rather than automatic operational action.
 To evaluate against a newer official MTA export:
 
 1. Download the latest CSV from the MTA/data.ny.gov source page:
-   <https://data.ny.gov/Transportation/MTA-NYCT-Subway-Elevator-and-Escalator-Availabilit/rc78-7x78>
+   <https://data.ny.gov/Transportation/MTA-NYCT-Subway-Elevator-and-Escalator-Availabilit/rc78-7x78/about_data>
 2. Rename the downloaded file so the path is exactly:
    `data/external/MTA_NYCT_Subway_Elevator_and_Escalator_Availability__Beginning_2015.csv`
 3. Replace the existing file at that path.
