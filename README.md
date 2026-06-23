@@ -1,4 +1,4 @@
-
+ode colab
 # MTA Elevator Next-Month Failure Pipeline
 
 Backend machine-learning pipeline for predicting next-month elevator risk in the
@@ -63,7 +63,7 @@ Committed data and reproducibility inputs:
 - `data/raw/df1_station_master.csv`  
   Small static station metadata / lookup table.
 - `data/external/MTA_NYCT_Subway_Elevator_and_Escalator_Availability__Beginning_2015.csv`  
-  Reference official MTA export downloaded on June 16, 2026.
+  Reference official MTA export downloaded on June 22, 2026.
 - `outputs/metrics/session5_frozen_test_metrics.json`  
   Recorded frozen-test metrics used for comparison without rerunning
   frozen-test evaluation.
@@ -160,9 +160,9 @@ Session 7 writes final backend reporting and latest unlabeled scores:
 - `outputs/predictions/latest_unlabeled_risk_scores.csv`
 - `outputs/predictions/latest_unlabeled_risk_scores_metadata.json`
 
-With the included June 16, 2026 MTA export, Session 6 evaluates target-known
-prediction months from June 1, 2025 through March 1, 2026. Session 7 uses April
-1, 2026 feature rows to generate unlabeled May 1, 2026 risk scores.
+With the included June 22, 2026 MTA export, Session 6 evaluates target-known
+prediction months from June 1, 2025 through April 1, 2026. Session 7 uses May
+1, 2026 feature rows to generate unlabeled June 1, 2026 risk scores.
 
 ## Current Performance Summary
 
