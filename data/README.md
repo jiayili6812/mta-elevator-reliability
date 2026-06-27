@@ -164,14 +164,10 @@ The source data includes 50 X-suffixed elevator equipment codes. In the reviewed
 exports these rows have zero `Unscheduled Outages`, zero `Entrapments`, and
 missing `Time Since Major Improvement`.
 
-These assets are most likely elevators whose maintenance is handled by an
-outside contractor rather than directly by MTA, which may explain the missing
-maintenance-history fields. This interpretation has not been formally confirmed
-from MTA documentation.
+According to the [MTA elevator & escalator status page](https://www.mta.info/elevator-escalator-status), elevators with an X in their equipment ID are managed and maintained by a third party (primarily real estate developers). Because MTA does not maintain these units directly, back-in-service times for X-suffixed elevators are default estimates rather than tracked return times. The MTA Performance Dashboard additionally notes that the age of third-party elevators is not always known by NYCT, which is consistent with the missing `Time Since Major Improvement` values observed in this dataset.
 
-The locked supervised modeling pipeline excludes X-suffixed equipment from
-model eligibility because their outcome/history fields appear structurally
-different from the rest of the elevator fleet.
+The locked supervised modeling pipeline excludes X-suffixed equipment from model eligibility
+because their outcome and history fields are structurally different from the rest of the elevator fleet.
 
 ## Development Versus New Data
 
