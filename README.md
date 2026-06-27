@@ -1,130 +1,72 @@
-ode colab
-# MTA Elevator Next-Month Failure Pipeline
+# NYC Subway Elevator Reliability Map
 
-Backend machine-learning pipeline for predicting next-month elevator risk in the
-NYC subway system using monthly MTA elevator availability records.
+A broken subway elevator - an inconvenience to some, a blocked way home for others.
 
-The pipeline estimates, for each eligible elevator-month, whether the elevator
-will experience a qualifying next-month failure event:
+In *"The Biggest Obstacle"* (Gearóid Dolan, 2021), activist and wheelchair user Dustin Jones recites a long list of subway stations he refuses to go to, after repeated experiences of being stranded by broken elevators. That struck me as a remarkable risk model, built over years of hard-earned memory.
 
-- `Entrapments > 0`, or
-- `Unscheduled Outages >= 2`
+This project is a start at turning that kind of knowledge into something more open and shareable, driven by measurable data, instead of dependent on having already been failed.
 
-The final locked model is a Random Forest trained on historical elevator-month
-features. It is intended as a risk-ranking and triage aid, not as a deterministic
-failure prediction system.
+**[→ Explore the live map](https://jiayili6812.github.io/mta-elevator-risk/)**
 
-Clustering, map generation, and frontend presentation are intentionally out of
-scope for this repository.
+*Independent project using public MTA data. Not affiliated with the MTA.*
 
-## What This Pipeline Does
+---
 
-This project provides a reproducible backend workflow that:
+## What it does
 
-1. validates the fixed historical data snapshot,
-2. builds leakage-safe next-month target labels,
-3. applies temporal train/validation/frozen-test guardrails,
-4. compares baseline, logistic regression, Random Forest, boosted-tree, and TCN
-   challenger models,
-5. locks a final Session 5 Random Forest model and threshold,
-6. evaluates that locked model on later target-known MTA months, and
-7. generates latest unlabeled elevator risk scores for the next month.
+A Random Forest model scores 352 NYC subway elevators by their likelihood of failing in the coming month. "Failure" means an entrapment or two or more unscheduled outages. Every prediction is plotted on an interactive WebGL map — click any elevator to see its risk score, the reliability signals behind it, and nearby alternatives for backup route planning.
 
-The most important reproducibility rule is that the frozen-test evaluation is
-not rerun during routine Colab or local execution. The final notebook runs only
-validation, prospective external evaluation, and latest-score generation.
+This is a planning and chronic-reliability layer, not a real-time trip tool. MTA's live feed tells you whether an elevator is broken right now; this model captures persistent degradation (the pattern of an elevator that keeps failing).
 
-## Locked Modeling Contract
+---
 
-- Prediction unit: one elevator-month.
-- Prediction question: using information available through month `T`, estimate
-  whether an elevator will experience a qualifying failure in month `T+1`.
-- Primary target: next-month `Entrapments > 0` or
-  `Unscheduled Outages >= 2`.
-- Frozen final test period: February 1, 2025 through April 1, 2025.
-- Final locked model: Random Forest.
-- Final feature set: full-history operational features without age fields.
-- Locked threshold: selected for approximately 70% recall on the frozen-test
-  workflow.
-- Primary model-selection metric: PR-AUC.
-- Supporting metrics: precision, recall, false negatives, ROC-AUC, Brier score,
-  and calibration diagnostics.
+## How it works
 
-See [pipeline-outline.md](pipeline-outline.md) and [decisions.md](decisions.md)
-for the full modeling history and guardrails.
+![MTA Elevator Risk — Technical Pipeline](docs/technical_pipeline.png)
 
-## Repository Contents
+**Data:** Monthly elevator availability records from the MTA, sourced from [data.ny.gov](https://data.ny.gov/Transportation/MTA-NYCT-Subway-Elevator-and-Escalator-Availabilit/rc78-7x78/about_data) (`rc78-7x78`), through May 2026.
 
-Committed data and reproducibility inputs:
+**Target:** For each elevator-month, the model predicts whether the next month will include an entrapment or two or more unscheduled outages.
 
-- `data/raw/df3_availability.csv`  
-  Locked development/training snapshot used for model development and the
-  frozen-test contract.
-- `data/raw/df1_station_master.csv`  
-  Small static station metadata / lookup table.
-- `data/external/MTA_NYCT_Subway_Elevator_and_Escalator_Availability__Beginning_2015.csv`  
-  Reference official MTA export downloaded on June 22, 2026.
-- `outputs/metrics/session5_frozen_test_metrics.json`  
-  Recorded frozen-test metrics used for comparison without rerunning
-  frozen-test evaluation.
+**Model:** Random Forest, trained on operational history features (outage rates, availability trends, seasonal patterns). Equipment age is deliberately excluded — it isn't a reliable predictor in this dataset.
 
-Not committed to Git:
+**Performance:** Validated at ~72% recall (64–78% across eleven months, June 2025–April 2026) on historical predictions. ROC-AUC ~0.71, PR-AUC ~0.65. The current June 2026 scores are forecasts and not yet gradeable — June outcomes won't be in MTA's data until the next cycle.
 
-- `outputs/models/final_random_forest.joblib`  
-  Trained model artifact. Downloaded from GitHub Releases.
-- `data/processed/`  
-  Generated canonical data from Session 6.
-- transient caches such as `__pycache__/`, `.pytest_cache/`, `.DS_Store`, and
-  notebook checkpoints.
+**Threshold vs. display:** The map highlights the highest-confidence predictions (≥0.65) for visual clarity, showing 63 high-risk and 136 medium-risk elevators. The model's actual decision threshold is 0.443, which flags 199 elevators and is the basis for all reported performance.
 
-See [data/README.md](data/README.md) for data provenance and file roles.
+---
 
-## Option 1: Run In Google Colab
+## Limitations and future work
 
-This is the recommended reproducibility path.
+- **Data lag:** MTA records are published monthly; the model can only score what's been reported.
+- **Reporting reliance:** The training labels come from MTA's own maintenance records. Whatever goes unreported doesn't get learned.
+- **Historical-only recall:** The ~72% figure describes past predictions with known outcomes. The live June 2026 batch is ungraded until outcomes are published.
+- **Cold start:** 28 of the 352 scored elevators weren't in the training cohort; 4 have exactly the minimum history window (6 months). Their scores carry more uncertainty.
+- **Crowdsourced rider reporting** would add a different and important vantage point — ground truth from the people the system fails, not just what gets logged.
+- **317 stations have no elevator at all.** The model can only work with what exists.
 
-Open:
+This is a start at treating access as something measurable and plannable — not just something to react to.
 
-[notebooks/colab_runner.ipynb](notebooks/colab_runner.ipynb)
+---
+
+## Run it yourself
+
+The full data processing → model → scoring pipeline is open source and designed to be reproducible.
+
+### Option 1: Google Colab (recommended)
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/jiayili6812/mta-elevator-risk/blob/main/notebooks/colab_runner.ipynb)
 
-The notebook:
+The notebook clones the repo, downloads the locked model artifact, runs validation, prospective evaluation, and generates the latest risk scores. See [COLAB_COMPATIBILITY.md](COLAB_COMPATIBILITY.md) for full instructions and how to run with newer MTA data.
 
-1. clones this GitHub repository,
-2. creates expected local folders,
-3. uses the committed reference data files,
-4. downloads `outputs/models/final_random_forest.joblib` from this project’s
-   GitHub Release assets,
-5. installs core dependencies,
-6. runs the test suite,
-7. validates the fixed data snapshot,
-8. runs Session 6 prospective external evaluation, and
-9. runs Session 7 final report and latest-score generation.
-
-The Colab notebook does **not** run `final-evaluate`.
-
-For the full Colab workflow, expected outputs, and instructions for replacing
-the included MTA export with newer official data, see
-[COLAB_COMPATIBILITY.md](COLAB_COMPATIBILITY.md).
-
-## Option 2: Run Locally From Terminal
-
-Create and activate a Python environment, then install the package:
+### Option 2: Local
 
 ```bash
 python -m pip install -r requirements.txt
 python -m pip install -e .
 ```
 
-Download the trained model artifact from this project’s GitHub Release assets
-and place it at:
-
-```text
-outputs/models/final_random_forest.joblib
-```
-
-Then run the core reproducibility workflow:
+Download `final_random_forest.joblib` from this project's GitHub Release assets and place it at `outputs/models/final_random_forest.joblib`, then:
 
 ```bash
 python -m pytest
@@ -133,85 +75,24 @@ python -m mta_elevator_pipeline.run_pipeline session6
 python -m mta_elevator_pipeline.run_pipeline session7
 ```
 
-Do not run frozen-test evaluation as part of normal reproduction.
+Do not run `final-evaluate` as part of normal reproduction — the frozen-test evaluation is a one-time guarded path.
 
-The frozen-test command exists only as a guarded one-time path:
+---
 
-```bash
-python -m mta_elevator_pipeline.run_pipeline final-evaluate \
-  --acknowledge I_UNDERSTAND_THIS_ACCESSES_THE_FROZEN_TEST_SET
+## Repository structure
+
+```
+data/                    Data snapshots and provenance notes
+notebooks/               Colab reproducibility notebook
+outputs/metrics/         Prospective and frozen-test evaluation metrics
+outputs/predictions/     Risk score outputs
+outputs/reports/         Model card and backend summary
+src/                     Pipeline package
+tests/                   Unit and guardrail tests
 ```
 
-## Expected Outputs
+See [data/README.md](data/README.md) for data provenance and field definitions.
 
-Session 6 writes prospective external evaluation outputs:
+---
 
-- `data/processed/session6_latest_canonical_availability.csv`
-- `outputs/metrics/session6_prospective_evaluation.md`
-- `outputs/metrics/session6_prospective_metrics.json`
-- `outputs/predictions/session6_prospective_predictions.csv`
-
-Session 7 writes final backend reporting and latest unlabeled scores:
-
-- `outputs/reports/final_model_card.md`
-- `outputs/reports/final_backend_summary.md`
-- `outputs/reports/final_metrics_comparison.csv`
-- `outputs/reports/frontend_prediction_schema.md`
-- `outputs/predictions/latest_unlabeled_risk_scores.csv`
-- `outputs/predictions/latest_unlabeled_risk_scores_metadata.json`
-
-With the included June 22, 2026 MTA export, Session 6 evaluates target-known
-prediction months from June 1, 2025 through April 1, 2026. Session 7 uses May
-1, 2026 feature rows to generate unlabeled June 1, 2026 risk scores.
-
-## Current Performance Summary
-
-On the prospective external evaluation window, the locked Session 5 Random
-Forest produced results broadly consistent with the frozen-test result:
-
-- Prospective PR-AUC: `0.653008`
-- Prospective ROC-AUC: `0.711994`
-- Prospective Brier score: `0.213711`
-- Precision at locked threshold: `0.564278`
-- Recall at locked threshold: `0.714476`
-
-The model produces many useful high-risk rankings, but it also produces false
-positives and false negatives. It should be used for prioritization, review
-queues, planning support, and triage rather than automatic operational action.
-
-## Newer MTA Data
-
-To evaluate against a newer official MTA export:
-
-1. Download the latest CSV from the MTA/data.ny.gov source page:
-   <https://data.ny.gov/Transportation/MTA-NYCT-Subway-Elevator-and-Escalator-Availabilit/rc78-7x78/about_data>
-2. Rename the downloaded file so the path is exactly:
-   `data/external/MTA_NYCT_Subway_Elevator_and_Escalator_Availability__Beginning_2015.csv`
-3. Replace the existing file at that path.
-4. Rerun Session 6 and Session 7.
-
-The pipeline currently expects that exact external CSV path.
-
-Newer data should not be used to change the locked model, threshold, target
-definition, feature set, or frozen-test result unless a separate retraining
-workflow is explicitly created and documented.
-
-## Project Structure
-
-```text
-config/                         Configuration files
-data/                           Data snapshots, metadata, and provenance notes
-notebooks/                      Colab reproducibility notebook
-outputs/audits/                 Data and lineage audit outputs
-outputs/metrics/                Development, frozen-test, and prospective metrics
-outputs/predictions/            Prediction outputs
-outputs/reports/                Final backend reports and model card
-src/mta_elevator_pipeline/      Pipeline package code
-tests/                          Unit and guardrail tests
-```
-
-## Notes
-
-Optional TensorFlow and XGBoost dependencies remain outside the core Colab
-workflow. The final reproducibility path uses only the core dependencies in
-`requirements.txt`.
+*Special thanks to Alex Elegudin (CEO of Wheeling Forward, former MTA Chief Accessibility Officer) for early insight into the realities of running transit at scale, and to Gearóid Dolan, whose documentary inspired this project.*
