@@ -1,12 +1,14 @@
 # NYC Subway Elevator Reliability Map
 
+[![NYC Subway Elevator Reliability Map](outputs/figures/hero.png)](https://nycsubwayelevators.com)
+
 A broken subway elevator - an inconvenience to some, a blocked way home for others.
 
 In *"The Biggest Obstacle"* (Gearóid Dolan, 2021), activist and wheelchair user Dustin Jones recites a long list of subway stations he refuses to go to, after repeated experiences of being stranded by broken elevators. That struck me as a remarkable risk model, built over years of hard-earned memory.
 
 This project is a start at turning that kind of knowledge into something more open and shareable, driven by measurable data, instead of dependent on having already been failed.
 
-**[→ Explore the live map](https://jiayili6812.github.io/mta-elevator-risk/)**
+**[→ Explore the live map](https://nycsubwayelevators.com)**
 
 *Independent project using public MTA data. Not affiliated with the MTA.*
 

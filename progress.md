@@ -366,3 +366,21 @@ the locked model, feature set, parameters, calibration policy, eligibility,
 target, or threshold based on prospective results or unlabeled latest scores.
 Future retraining, if pursued, must be a separately labeled deployment-model
 step and must not be presented as the same evaluated research model.
+
+## Frontend Handoff
+
+- The map frontend reads its risk scores from this repository, at
+  `outputs/predictions/frontend_latest_risk_scores.csv` (with sidecar
+  `frontend_latest_risk_scores_metadata.json`). This is the blessed frontend
+  input; the map generator consumes it directly.
+- That CSV and its metadata are local-only runtime artifacts, gitignored on
+  purpose (see `.gitignore`), alongside the model `.joblib` pulled from the
+  GitHub Release. The tracked, published prediction exports remain
+  `outputs/predictions/latest_unlabeled_risk_scores.csv` and its metadata.
+- The frontend scores forecast failure risk for June 2026 (the map legend and
+  README describe them as the June 2026 forecast). They are not
+  outcome-evaluated because June 2026 outcomes are not yet published by the
+  MTA. Scores refresh monthly as new MTA data lands.
+- This supersedes the pre-consolidation handoff note, which described score
+  paths and a separate `web/` specs folder that no longer exist after the
+  workspace was consolidated into this single repository.
