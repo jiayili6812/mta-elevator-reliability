@@ -23,3 +23,7 @@ outputs/*
 !outputs/reports/
 !outputs/audits/
 !outputs/**/.gitkeep
+
+# local-only runtime artifacts (model from GitHub Release, frontend handoff scores)
+outputs/models/*.joblib
+outputs/predictions/frontend_latest_risk_scores*
