@@ -54,7 +54,7 @@ body.map-open #right-top-panel {
   box-shadow: 0 2px 4px rgba(0,0,0,0.10), 0 8px 24px rgba(0,0,0,0.13), 0 24px 48px rgba(0,0,0,0.06);
   overflow: hidden; transform: translateZ(0);
 }
-#privacy-bubble h3 {
+#privacy-bubble h2 {
   margin: 0 0 8px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 18px; font-weight: 400; color: #1a1a1a;
 }
@@ -172,13 +172,41 @@ html, body { background: #fbfbfa; }
   border: 1px solid rgba(0,0,0,.09) !important;
   box-shadow: 0 2px 12px rgba(0,0,0,.08) !important;
 }
-.leaflet-control-attribution { opacity: .48; font-size: 8px; }
-.leaflet-interactive:focus,
+/* U3 (S3c): was 8px at 48% opacity (≈2.4:1). Links get an AA-passing blue. */
+.leaflet-control-attribution { opacity: 1; font-size: 9px; color: #595959; }
+.leaflet-control-attribution a { color: #20627e; }
+/* U1 (S3c): the live map's blanket focus-outline suppression is removed.
+   Mouse clicks stay outline-free via :focus-visible; keyboard focus shows
+   a visible ring everywhere, plus the hover halo on markers (JS). */
+:focus-visible {
+  outline: 2px solid #0f62d6;
+  outline-offset: 2px;
+}
+.leaflet-interactive:focus:not(:focus-visible),
+.leaflet-marker-icon:focus:not(:focus-visible) {
+  outline: none;
+}
 .leaflet-interactive:focus-visible,
-.leaflet-marker-icon:focus,
 .leaflet-marker-icon:focus-visible {
-  outline: none !important;
-  box-shadow: none !important;
+  outline: 2px solid #0f62d6;
+  outline-offset: 2px;
+}
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0; border: 0;
+  clip: rect(0 0 0 0); clip-path: inset(50%);
+  overflow: hidden; white-space: nowrap;
+}
+/* U4 (S3c): honor reduced-motion — collapse every CSS transition/animation.
+   The silk shader + Leaflet flyTo are gated in app.js. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }
 /* Leaflet Search creates a persistent result circle with this exact stroke. */
 .leaflet-overlay-pane path[stroke="#e03"] { display: none; }
@@ -275,16 +303,16 @@ html, body { background: #fbfbfa; }
   background-color: var(--search-bg);
   backdrop-filter: blur(var(--search-blur)) saturate(140%);
   -webkit-backdrop-filter: blur(var(--search-blur)) saturate(140%);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888888' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cline x1='16.65' y1='16.65' x2='21' y2='21'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23595959' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cline x1='16.65' y1='16.65' x2='21' y2='21'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: 11px center;
   background-size: 12px 12px;
   box-shadow: var(--search-shadow);
-  color: #888888;
+  color: #3a3a3a;
   font: 600 11px/1.4 -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
   transition: box-shadow .2s, background .2s;
 }
-#station-search-slot .leaflet-control-search input.search-input::placeholder { color: #888888; opacity: 1; }
+#station-search-slot .leaflet-control-search input.search-input::placeholder { color: #595959; opacity: 1; }
 #station-search-slot .leaflet-control-search input.search-input:focus {
   background-color: rgba(255,255,255,0.28);
   box-shadow: 0 2px 8px rgba(0,0,0,0.10), 0 8px 28px rgba(0,0,0,0.13), inset 0 1px 0 rgba(255,255,255,0.80), 0 0 0 1.5px rgba(255,255,255,0.45);
@@ -303,7 +331,7 @@ html, body { background: #fbfbfa; }
 #station-search-slot .search-placeholder span {
   display: inline-block;
   white-space: nowrap;
-  color: #888888;
+  color: #595959;
   font: 600 11px/1.4 -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
 }
 #station-search-slot .leaflet-control-search .search-button { display: none !important; }
@@ -317,6 +345,10 @@ html, body { background: #fbfbfa; }
   place-items: center;
   transform: translateY(-50%);
   margin: 0;
+  padding: 0;
+  border: 0;            /* it's a real <button> since S3c (U1 keyboard) */
+  cursor: pointer;
+  appearance: none;
   background: transparent;
   color: transparent;
   font-size: 0;
@@ -324,7 +356,7 @@ html, body { background: #fbfbfa; }
 }
 #station-search-slot .leaflet-control-search .search-cancel::after {
   content: "\00d7";
-  color: #777;
+  color: #595959;
   font: 300 15px/1 -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
 }
 #station-search-slot .leaflet-control-search .search-cancel:hover::after {
@@ -447,7 +479,7 @@ body.map-open #right-top-panel.drawer-open {
   --pad-x: clamp(24px, 3.6vw, 39px);
   --pad-y: 18px;
   --div: rgba(42,42,42,0.10);
-  --muted: #777777;
+  --muted: #6b6b6b;
   --red: #c0392b;
   --red-lt: rgba(192,57,43,0.5);
   --blue-ace: #0039A6;
@@ -496,7 +528,7 @@ body.map-open #right-top-panel.drawer-open {
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  font-size: 7px;
+  font-size: 8px;
   font-weight: 700;
   display: inline-flex;
   align-items: center;
@@ -528,7 +560,7 @@ body.map-open #right-top-panel.drawer-open {
 }
 .risk-badge {
   color: var(--risk-color);
-  font: 500 8px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font: 500 9px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
   letter-spacing: .13em;
 }
 .popup-route-badge {
@@ -539,12 +571,12 @@ body.map-open #right-top-panel.drawer-open {
   border-radius: 50%;
   background: var(--route-color);
   color: #fff;
-  font: 700 7px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font: 700 8px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 .popup-route-badge-small {
   width: 14px;
   height: 14px;
-  font-size: 6px;
+  font-size: 7px;
 }
 .popup-route-badge-dark { color: #111; }
 .risk-score-block { text-align: right; max-width: 11rem; }
@@ -557,7 +589,7 @@ body.map-open #right-top-panel.drawer-open {
   display: block;
   margin-top: .55rem;
   color: var(--muted);
-  font: 400 8px/1.25 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font: 400 9px/1.25 "Helvetica Neue", Helvetica, Arial, sans-serif;
   text-transform: uppercase;
 }
 .drawer-section h3 {
@@ -665,7 +697,7 @@ body.map-open #right-top-panel.drawer-open {
   margin: 1.5rem var(--pad-x);
   padding: .7rem .8rem;
   background: rgba(255,255,255,.42);
-  color: #777;
+  color: #6b6b6b;
   font: 400 11px/1.4 "EB Garamond", Garamond, Georgia, serif;
 }
 .methodology-note a { color: #2A2A2A; text-decoration-thickness: 1px; text-underline-offset: 2px; }
@@ -687,7 +719,7 @@ body.map-open #right-top-panel.drawer-open {
   display: block;
   margin-top: .84rem;
   color: var(--muted);
-  font: 400 8px/1.35 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font: 400 9px/1.35 "Helvetica Neue", Helvetica, Arial, sans-serif;
   letter-spacing: .08em;
   text-transform: uppercase;
 }
@@ -704,9 +736,9 @@ body.map-open #right-top-panel.drawer-open {
   font: 400 9px/1 "EB Garamond", Garamond, Georgia, serif;
 }
 .trend-final-value { font: 400 8px/1 "Helvetica Neue", Helvetica, Arial, sans-serif; }
-.fleet-label { font: 400 8px/1 "Helvetica Neue", Helvetica, Arial, sans-serif; fill: #777; }
+.fleet-label { font: 400 8px/1 "Helvetica Neue", Helvetica, Arial, sans-serif; fill: #6b6b6b; }
 .month-label { font: 400 7px/1 "Helvetica Neue", Helvetica, Arial, sans-serif; }
-.month-label { fill: #777; }
+.month-label { fill: #6b6b6b; }
 .month-label.is-current,
 .trend-final-value { fill: var(--risk-color); }
 .trend-final-dot { fill: var(--risk-color); }
@@ -722,11 +754,11 @@ body.map-open #right-top-panel.drawer-open {
 .season-bar span { width: 100%; background: rgba(42,42,42,.10); min-height: 4px; }
 .season-bar span.is-peak { background: var(--red); }
 .season-bar span.is-near-peak { background: var(--red-lt); }
-.season-bar em { color: var(--muted); font: normal 7px/1 "Helvetica Neue", Helvetica, Arial, sans-serif; }
+.season-bar em { color: var(--muted); font: normal 8px/1 "Helvetica Neue", Helvetica, Arial, sans-serif; }
 .season-bar-label {
   margin-bottom: auto;
   color: var(--red);
-  font: 600 7px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font: 600 8px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 .history-grid { display: flex; column-gap: 4%; }
 .history-card { flex: 1; min-width: 0; }
@@ -765,15 +797,15 @@ body.map-open #right-top-panel.drawer-open {
 }
 .nearby-risk {
   color: #fff;
-  background: #777;
+  background: #6b6b6b;
   padding: 2px 4px;
-  font: 400 7px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font: 400 8px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
   letter-spacing: .08em;
   text-transform: uppercase;
   box-sizing: border-box;
 }
 .nearby-high { background: #d12715; }
-.nearby-medium { background: #f5968a; }
+.nearby-medium { background: #f5968a; color: #111; }
 .nearby-low { background: #ffffff; color: #111; border: 0.5px solid rgba(119,119,119,0.5); }
 .nearby-station-meta {
   display: flex;
@@ -807,11 +839,11 @@ body.map-open #right-top-panel.drawer-open {
   letter-spacing: .03em;
 }
 .nearby-meta {
-  color: #777;
+  color: #6b6b6b;
   font: 400 9px/1.2 "EB Garamond", Garamond, Georgia, serif;
 }
 .nearby-same {
-  color: #777;
+  color: #6b6b6b;
   font: 400 9px/1.2 "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 .nearby-right {
@@ -910,4 +942,162 @@ body.cursor-no-elevator .leaflet-interactive { cursor: url('data:image/png;base6
   #station-search-slot .leaflet-control-search input.search-input,
   #station-search-slot .leaflet-control-search .search-tooltip { width: 245px !important; }
   #map-title > div:nth-child(3) { display: none; }
+}
+
+/* ── S3c additions: risk-in-words, unscored markers, list view, keyboard,
+      mobile chrome relayout ─────────────────────────────────────────────── */
+.risk-words {
+  grid-column: 1 / -1;
+  margin: .9rem 0 0;
+  color: #2A2A2A;
+  font: 400 13px/1.5 "EB Garamond", Garamond, Georgia, serif;
+}
+.tooltip-tier-words { color: #595959; }
+.marker-layer-unscored {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  border: 1.5px solid #6b6b6b;
+  background: #fff;
+  box-sizing: border-box;
+}
+#open-station-list {
+  appearance: none;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: #444;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  padding: 5px 0 2px;
+  text-align: left;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+#open-station-list:hover { color: #1a1a1a; }
+
+/* Station list view (accessible fallback + crawlable content, PLAN 3c / E2) */
+#station-list-view {
+  position: fixed; inset: 0; z-index: 10002;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(20,20,28,0.45);
+  padding: 24px;
+}
+#station-list-view[hidden] { display: none; }
+#station-list-card {
+  display: flex; flex-direction: column;
+  width: min(720px, 100%);
+  max-height: min(80vh, 100%);
+  background: #fff;
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+}
+#station-list-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px 8px;
+}
+#station-list-title {
+  margin: 0;
+  font-size: 15px; font-weight: 700; color: #1a1a1a;
+}
+#station-list-close {
+  border: 0; background: transparent; cursor: pointer;
+  color: #595959; font: 300 22px/1 -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  padding: 2px 6px;
+}
+#station-list-close:hover { color: #1a1a1a; }
+#station-list-note {
+  margin: 0; padding: 0 20px 10px;
+  font-size: 12px; line-height: 1.5; color: #444;
+}
+#station-list-scroll { overflow: auto; padding: 0 20px 16px; }
+#station-list-table { border-collapse: collapse; width: 100%; font-size: 12px; color: #1a1a1a; }
+#station-list-table th, #station-list-table td {
+  text-align: left; padding: 6px 10px 6px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+#station-list-table th {
+  position: sticky; top: 0; background: #fff;
+  font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #444;
+}
+#station-list-table td.num { font-variant-numeric: tabular-nums; }
+.list-tier { font-weight: 600; }
+.list-tier-high { color: #c0392b; }
+.list-tier-medium { color: #854F0B; }
+.list-tier-low { color: #3B6D11; }
+.list-tier-unscored { color: #595959; font-weight: 400; }
+.list-show-btn {
+  border: 1px solid rgba(0,0,0,0.25); background: transparent;
+  font: inherit; font-size: 11px; color: #1a1a1a;
+  padding: 2px 8px; cursor: pointer; white-space: nowrap;
+}
+.list-show-btn:hover { background: #f4f4f3; }
+
+/* Mobile chrome bar — pills that expand search / line filter (bottom sheet) */
+#mobile-chrome-bar { display: none; }
+
+@media (max-width: 640px) {
+  /* Landing: keep the title inside the viewport; let the footnote wrap;
+     the no-tracking note sits above the footnote instead of on top of it. */
+  #landing-title { font-size: 30px !important; letter-spacing: 6px !important; }
+  #landing-footnote {
+    white-space: normal !important;
+    width: calc(100vw - 48px);
+    line-height: 1.6 !important;
+  }
+  #privacy-bubble {
+    left: 12px; right: 12px; width: auto;
+    bottom: 64px;
+    padding: 14px 16px;
+  }
+  #privacy-bubble h2 { font-size: 15px; }
+  #privacy-bubble p { font-size: 12px; line-height: 18px; margin: 0; }
+
+  /* Legend card must not collide with the bottom bar */
+  #map-title { max-height: calc(100vh - 120px) !important; }
+
+  /* Search + badges move to a thumb-reachable bottom bar (owner decision,
+     2026-07-15). Collapsed by default; pills expand each panel upward. */
+  #right-top-panel {
+    top: auto; bottom: 0; left: 0; right: 0;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px calc(10px + env(safe-area-inset-bottom, 0px));
+  }
+  #mobile-chrome-bar {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    order: 3;
+  }
+  #mobile-chrome-bar button {
+    display: inline-flex; align-items: center; gap: 6px;
+    appearance: none; cursor: pointer;
+    border: 1px solid var(--glass-border);
+    border-radius: 999px;
+    background: rgba(255,255,255,0.92);
+    box-shadow: var(--glass-shadow);
+    color: #1a1a1a;
+    font: 600 12px/1 -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    padding: 10px 16px;
+  }
+  #mobile-chrome-bar button[aria-expanded="true"] {
+    background: #1a1a1a; color: #fff; border-color: #1a1a1a;
+  }
+  #station-search-slot { display: none; order: 1; }
+  body.mobile-search-open #station-search-slot { display: block; }
+  #subway-route-badges { display: none; order: 2; }
+  body.mobile-filter-open #subway-route-badges { display: flex; }
+  #station-search-slot .leaflet-control-search input.search-input {
+    background-color: rgba(255,255,255,0.92);
+  }
+  /* Autocomplete opens upward from the bottom bar */
+  #station-search-slot .leaflet-control-search .search-tooltip {
+    top: auto; bottom: 42px;
+    max-height: min(230px, calc(100vh - 220px));
+    background: rgba(255,255,255,0.98);
+  }
+  #station-list-view { padding: 10px; }
+  #station-list-card { max-height: calc(100vh - 20px); }
 }

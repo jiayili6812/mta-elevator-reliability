@@ -1,9 +1,12 @@
-/* app.js — v2 renderer (S3b1 core + S3b2 chrome). One data-driven port of the
- * live map's six folium MacroElements plus the landing overlay/silk tween,
- * hand-rolled station search (replaces leaflet-search, spec §2.2) and the
- * route-badge filter; consumes /data/{elevators.json,stations.json,
- * routes.geojson}. Leaflet 1.9.x core only — no plugins.
- * Parity reference: planning/s3/audit.md §C.1–C.9. */
+/* app.js — v2 renderer (S3b1 core + S3b2 chrome + S3c a11y/UX pass). One
+ * data-driven port of the live map's six folium MacroElements plus the landing
+ * overlay/silk tween, hand-rolled station search (replaces leaflet-search,
+ * spec §2.2) and the route-badge filter; consumes /data/{elevators.json,
+ * stations.json,routes.geojson}. Leaflet 1.9.x core only — no plugins.
+ * Parity reference: planning/s3/audit.md §C.1–C.9; deliberate S3c deviations
+ * carry their audit §D.3 ids (U1 keyboard, U2 risk-in-words, U4 reduced
+ * motion, U6 SIR, U7 permalinks, U10 semantics + unscored markers, list view,
+ * mobile bottom bar). */
 (function () {
   'use strict';
 
@@ -51,6 +54,11 @@
   }
   function pct0(p) { return pyfmt(p * 100, 0) + '%'; }   // f"{p:.0%}"
   function pct1(v) { return pyfmt(v * 100, 1) + '%'; }   // f"{v:.1%}"
+
+  // U4 (S3c): motion preference — gates the silk shader loop, silk tweens,
+  // and every flyTo. CSS transitions are collapsed by the media query.
+  var motionQuery = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+  function prefersReducedMotion() { return !!(motionQuery && motionQuery.matches); }
 
   function esc(value) {
     return String(value)
@@ -111,6 +119,15 @@
 
   var silkTween = null;
   function startSilkTween(fromP, fromRGB, toP, toRGB, durationMs) {
+    if (prefersReducedMotion()) {
+      // Jump straight to the end state — no animated tween.
+      window.silkParams.speed = toP.speed;
+      window.silkParams.scale = toP.scale;
+      window.silkParams.noiseIntensity = toP.noiseIntensity;
+      window.silkRGB = toRGB.slice();
+      silkTween = null;
+      return;
+    }
     silkTween = { start: performance.now(), duration: durationMs, fromP: fromP, fromRGB: fromRGB, toP: toP, toRGB: toRGB };
   }
   function lerp(a, b, t) { return a + (b - a) * t; }
@@ -275,6 +292,14 @@
       var topLeft = map.containerPointToLayerPoint([0, 0]);
       L.DomUtil.setPosition(canvas, topLeft);
     }
+    // U4 (S3c): the rAF loop only self-reschedules while animation is wanted.
+    // Under prefers-reduced-motion the shader still draws (it IS the page
+    // background) but as a static frame; kick() paints one frame after
+    // map moves/resizes or a motion-preference flip. The loop also parks
+    // while the tab is hidden (battery).
+    function shouldAnimate() {
+      return !document.hidden && !prefersReducedMotion();
+    }
     function render(now) {
       tickSilkTween(now);   // landing → map silk tween (live wraps rAF instead)
       resize();
@@ -292,13 +317,29 @@
       gl.uniform1f(uniforms.rotation, p.rotation);
       gl.uniform1f(uniforms.noiseIntensity, p.noiseIntensity);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-      animationFrame = requestAnimationFrame(render);
+      animationFrame = shouldAnimate() ? requestAnimationFrame(render) : null;
+    }
+    function kick() {
+      if (animationFrame === null && !document.hidden) {
+        animationFrame = requestAnimationFrame(render);
+      }
     }
 
     map.on('resize move zoom viewreset', function () {
       resize();
       syncPosition();
+      kick();   // repaint once even when the loop is parked (reduced motion)
     });
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) {
+        if (animationFrame !== null) { cancelAnimationFrame(animationFrame); animationFrame = null; }
+      } else {
+        kick();
+      }
+    });
+    if (motionQuery && motionQuery.addEventListener) {
+      motionQuery.addEventListener('change', kick);
+    }
     resize();
     syncPosition();
     animationFrame = requestAnimationFrame(render);
@@ -306,17 +347,28 @@
     window.silkBaseLayer = {
       pane: pane,
       canvas: canvas,
-      stop: function () { if (animationFrame) cancelAnimationFrame(animationFrame); }
+      kick: kick,
+      stop: function () { if (animationFrame !== null) cancelAnimationFrame(animationFrame); }
     };
   })();
 
-  // ── Landing overlay wiring (audit C.1) ───────────────────────────────────
+  // ── Landing overlay wiring (audit C.1; U10/U1 S3c) ───────────────────────
+  // While the landing overlay is up, the map chrome behind it is `inert`, so
+  // the first Tab press lands on Explore (U10) instead of the invisible map.
+  // dismissLanding(instant) is shared with the U7 permalink boot path.
+  var LANDING_INERT_IDS = ['map', 'map-title', 'right-top-panel', 'elevator-detail-panel'];
+  var dismissLanding = null;
   (function () {
     var overlay = document.getElementById('landing-overlay');
     var privacyBubble = document.getElementById('privacy-bubble');
     var privacyClose = document.getElementById('privacy-close-btn');
     var exploreBtn = document.getElementById('explore-btn');
     if (!overlay) return;
+
+    LANDING_INERT_IDS.forEach(function (id) {
+      var node = document.getElementById(id);
+      if (node) node.setAttribute('inert', '');
+    });
 
     setTimeout(function () { privacyBubble.style.opacity = '1'; }, 1000);
 
@@ -326,16 +378,40 @@
       setTimeout(function () { privacyBubble.style.display = 'none'; }, 400);
     });
 
-    exploreBtn.addEventListener('click', function () {
+    var dismissed = false;
+    dismissLanding = function (instant) {
+      if (dismissed) return;
+      dismissed = true;
+      LANDING_INERT_IDS.forEach(function (id) {
+        // The drawer stays inert until openPanel lifts it (U1 focus handling).
+        if (id === 'elevator-detail-panel') return;
+        var node = document.getElementById(id);
+        if (node) node.removeAttribute('inert');
+      });
       var fromP = { speed: window.silkParams.speed, scale: window.silkParams.scale, noiseIntensity: window.silkParams.noiseIntensity, rotation: 0 };
       var fromRGB = window.silkRGB.slice();
       startSilkTween(fromP, fromRGB, SILK_MAP, SILK_MAP_RGB, 1500);
-      map.flyTo([DEFAULT_LAT, DEFAULT_LNG], DEFAULT_ZOOM, { duration: 1.8, easeLinearity: 0.25 });
-      overlay.classList.add('dismissed');
-      setTimeout(function () {
+      if (window.silkBaseLayer && window.silkBaseLayer.kick) window.silkBaseLayer.kick();
+      if (instant || prefersReducedMotion()) {
+        map.setView([DEFAULT_LAT, DEFAULT_LNG], DEFAULT_ZOOM, { animate: false });
+        overlay.classList.add('dismissed');
         overlay.style.display = 'none';
         document.body.classList.add('map-open');
-      }, 1100);
+      } else {
+        map.flyTo([DEFAULT_LAT, DEFAULT_LNG], DEFAULT_ZOOM, { duration: 1.8, easeLinearity: 0.25 });
+        overlay.classList.add('dismissed');
+        setTimeout(function () {
+          overlay.style.display = 'none';
+          document.body.classList.add('map-open');
+        }, 1100);
+      }
+    };
+
+    exploreBtn.addEventListener('click', function () {
+      dismissLanding(false);
+      // Keyboard journey continues from the map itself (Leaflet's container
+      // is a tab stop); mouse users are unaffected.
+      map.getContainer().focus({ preventScroll: true });
     });
   })();
 
@@ -363,6 +439,18 @@
     var fleetMonthly = data.fleet.monthly_availability;
     var elevatorsById = {};
     elevators.forEach(function (el) { elevatorsById[el.id] = el; });
+    var stationsById = {};
+    stations.forEach(function (st) { stationsById[st.complex_id] = st; });
+    var riskWords = data.risk_words || {};
+
+    // U4 (S3c): every map movement honors prefers-reduced-motion.
+    function flyOrSet(center, zoom, options, instant) {
+      if (instant || prefersReducedMotion()) {
+        map.setView(center, zoom, { animate: false });
+      } else {
+        map.flyTo(center, zoom, options);
+      }
+    }
 
     // ── Subway track layer (audit C.3): live default is the JS-applied one ──
     var subwaySettings = { color: '#000000', weight: 1.0, defaultOpacity: 0.25 };
@@ -419,13 +507,22 @@
       return marker;
     }
 
+    // Keyboard marker index (U1): one roving tab stop over every marker that
+    // carries elevator information (scored + unscored complexes), walked with
+    // the arrow keys, sorted by station name so the order is predictable.
+    var focusEntries = [];
+    var markersByElevatorId = {};
+
     elevators.forEach(function (el) {
+      var words = riskWords[el.tier] || {};
       var tooltip = '<span class="marker-tooltip-content">' +
         '<b>' + esc(el.station) + '</b><br>' +
-        esc(el.id) + ' &nbsp;&middot;&nbsp; Risk: <b>' + pct0(el.p) + '</b></span>';
+        esc(el.id) + ' &nbsp;&middot;&nbsp; Risk: <b>' + pct0(el.p) + '</b>' +
+        (words.short ? '<br><span class="tooltip-tier-words">' + esc(words.short) + '</span>' : '') +
+        '</span>';
       var marker;
       if (el.tier === 'high') {
-        marker = L.marker([el.lat, el.lon], { icon: triangleIcon(), pane: 'elevatorPane' });
+        marker = L.marker([el.lat, el.lon], { icon: triangleIcon(), pane: 'elevatorPane', keyboard: false });
         sizeBindings.push({ marker: marker, type: 'triangle' });
       } else {
         marker = makeShapeMarker([el.lat, el.lon],
@@ -437,10 +534,17 @@
       marker.stationRoutes = el.routes;
       marker.addTo(tierGroups[el.tier]);
       routePreviewMarkers.push(marker);
+      markersByElevatorId[el.id] = { marker: marker, el: el };
       marker.on('click', function () {
-        var markerElement = marker.getElement && marker.getElement();
-        if (markerElement && markerElement.blur) markerElement.blur();
         openPanel(marker, el);
+      });
+      focusEntries.push({
+        marker: marker,
+        sortKey: el.station + ' ' + el.display_id,
+        label: el.station + ', elevator ' + el.display_id + ': ' +
+          TIER_LABELS[el.tier].toLowerCase() + ', ' + pct0(el.p) + ' failure probability' +
+          (words.short ? '. ' + words.short : '') + '. Press Enter for details.',
+        activate: function () { openPanel(marker, el); }
       });
     });
 
@@ -461,10 +565,46 @@
       sizeBindings.push({ marker: marker, type: 'circle' });
     });
 
+    // Unscored elevator complexes (KNOWN_ISSUE fix, spec §8 decision 2):
+    // muted hollow-ring markers, searchable, honest per-reason labels.
+    var UNSCORED_REASONS = {
+      third_party: 'Not scored — maintained by a third party, not NYCT',
+      insufficient_history: 'Too new to score — needs 6 months of service history'
+    };
+    var layerUnscored = L.featureGroup();
+    var unscoredCount = 0;
+    stations.forEach(function (st) {
+      if (st.status !== 'unscored') return;
+      unscoredCount += 1;
+      var codes = st.elevator_ids.map(formatEquipmentCode).join(', ');
+      var reason = UNSCORED_REASONS[st.unscored_reason] || 'Not scored';
+      var tooltip = '<span class="marker-tooltip-content">' +
+        '<b>' + esc(st.name) + '</b><br>' +
+        esc(codes) +
+        '<br><span class="tooltip-tier-words">' + esc(reason) + '</span></span>';
+      var marker = L.circleMarker([st.lat, st.lon], {
+        radius: 3, stroke: true, color: '#6b6b6b', weight: 1.5,
+        fill: true, fillColor: '#ffffff', fillOpacity: 0.85, pane: 'elevatorPane'
+      });
+      marker._keepOwnOutline = true;   // updateMarkerOutlines must not restyle the ring
+      marker.bindTooltip(tooltip, { sticky: true, className: 'marker-tooltip-box' });
+      marker.stationRoutes = st.routes;
+      marker.addTo(layerUnscored);
+      routePreviewMarkers.push(marker);
+      sizeBindings.push({ marker: marker, type: 'circle', base: 3 });
+      focusEntries.push({
+        marker: marker,
+        sortKey: st.name + ' unscored',
+        label: st.name + ', elevator' + (st.elevator_ids.length === 1 ? ' ' : 's ') + codes + ': ' + reason + '.',
+        activate: function () { marker.openTooltip(); }
+      });
+    });
+
     layerHigh.addTo(map);
     layerMedium.addTo(map);
     layerLow.addTo(map);
     layerNoElevator.addTo(map);
+    layerUnscored.addTo(map);
 
     // ── Zoom-scale curve (port of MarkerZoomScaleController; audit C.4) ─────
     var ZOOM_SCALE_POINTS = [
@@ -489,7 +629,7 @@
       var multiplier = zoomMultiplier(map.getZoom());
       sizeBindings.forEach(function (binding) {
         if (binding.type === 'circle') {
-          binding.marker.setRadius(2 * multiplier);
+          binding.marker.setRadius((binding.base || 2) * multiplier);
         } else if (binding.type === 'square') {
           var pathEl = binding.marker._path;
           if (pathEl) pathEl.style.setProperty('--marker-zoom-scale', multiplier);
@@ -541,13 +681,20 @@
     function updateMarkerOutlines() {
       document.documentElement.style.setProperty('--subway-default-color', subwaySettings.color);
       routePreviewMarkers.forEach(function (marker) {
+        if (marker._keepOwnOutline) return;   // unscored rings keep their muted stroke
         if (marker.setStyle) marker.setStyle({ color: subwaySettings.color });
+      });
+    }
+    function syncBadgePressed() {
+      document.querySelectorAll('.subway-legend-swatch').forEach(function (swatch) {
+        swatch.setAttribute('aria-pressed', swatch.classList.contains('is-active') ? 'true' : 'false');
       });
     }
     function clearActiveSwatch() {
       document.querySelectorAll('.subway-legend-swatch').forEach(function (swatch) {
         swatch.classList.remove('is-active');
       });
+      syncBadgePressed();
     }
     function resetSubwayLines() {
       subwayLayer.eachLayer(function (layer) {
@@ -601,15 +748,20 @@
       activeSwatchEl = activeSwatch;
       clearActiveSwatch();
       if (activeSwatch) activeSwatch.classList.add('is-active');
+      syncBadgePressed();
       applyColorHighlight([value]);
     }
-    function previewMarkerRoutes(marker) {
+    function markerPreviewColors(marker) {
       var seen = {};
       var previewColors = [];
       (marker.stationRoutes || []).forEach(function (route) {
         var color = routeColorMap[route];
         if (color && !seen[color]) { seen[color] = true; previewColors.push(color); }
       });
+      return previewColors;
+    }
+    function previewMarkerRoutes(marker) {
+      var previewColors = markerPreviewColors(marker);
       if (previewColors.length) highlightSubwayLines('preview', previewColors, null);
     }
 
@@ -639,6 +791,7 @@
     // toggle-off (same badge), switch (other badge) and hover-preview
     // re-assert semantics exactly as the live SubwayHighlightController.
     document.querySelectorAll('.subway-legend-swatch').forEach(function (swatch) {
+      swatch.setAttribute('aria-pressed', 'false');   // U10: filter toggles announce state
       swatch.addEventListener('click', function (event) {
         event.stopPropagation();
         highlightSubwayLines('color', swatch.dataset.subwayColor.toUpperCase(), swatch);
@@ -650,48 +803,60 @@
 
     // ── Station search (hand-rolled autocomplete over stations.json;
     //    audit C.8, spec §2.2). Replaces leaflet-search: same slot/skin,
-    //    same zoom-17 setView, no result marker. The index excludes the 10
-    //    unscored complexes (435 entries) until 3c makes them searchable. ──
+    //    same zoom-17 setView, no result marker. S3c: all 445 complexes are
+    //    searchable (the 10 unscored included — spec §8 decision 2); the
+    //    input is an ARIA combobox and a polite live region announces the
+    //    result count (U10). ──
     (function () {
       var slot = document.getElementById('station-search-slot');
       if (!slot) return;
       var input = slot.querySelector('input.search-input');
       var cancelBtn = slot.querySelector('.search-cancel');
       var tooltip = slot.querySelector('.search-tooltip');
+      var statusEl = document.getElementById('search-results-status');
 
       function normalizeSearch(value) {           // normalize_search_text()
         return String(value).toLowerCase().replace(/[^a-z0-9]+/g, ' ')
           .replace(/^ +| +$/g, '');
       }
 
-      var searchIndex = stations
-        .filter(function (st) { return st.status !== 'unscored'; })
-        .map(function (st) {
-          return {
-            label: st.name + ' (' + st.routes.join(',') + ')',
-            text: st.search || normalizeSearch(st.name),
-            lat: st.lat,
-            lon: st.lon
-          };
-        });
+      var searchIndex = stations.map(function (st) {
+        return {
+          label: st.name + ' (' + st.routes.join(',') + ')',
+          text: st.search || normalizeSearch(st.name),
+          lat: st.lat,
+          lon: st.lon
+        };
+      });
       window._stationSearch = { count: searchIndex.length };
 
       var currentMatches = [];
       var selectedIdx = -1;
 
+      function announce(text) {
+        if (statusEl) statusEl.textContent = text;
+      }
       function hideTips() {
         tooltip.style.display = 'none';
         tooltip.innerHTML = '';
         currentMatches = [];
         selectedIdx = -1;
+        input.setAttribute('aria-expanded', 'false');
+        input.removeAttribute('aria-activedescendant');
       }
       function markSelected() {
         var tips = tooltip.children;
         for (var i = 0; i < tips.length; i += 1) {
           tips[i].classList.toggle('search-tip-select', i === selectedIdx);
+          tips[i].setAttribute('aria-selected', i === selectedIdx ? 'true' : 'false');
         }
-        if (selectedIdx >= 0 && tips[selectedIdx] && tips[selectedIdx].scrollIntoView) {
-          tips[selectedIdx].scrollIntoView({ block: 'nearest' });
+        if (selectedIdx >= 0 && tips[selectedIdx]) {
+          input.setAttribute('aria-activedescendant', tips[selectedIdx].id);
+          if (tips[selectedIdx].scrollIntoView) {
+            tips[selectedIdx].scrollIntoView({ block: 'nearest' });
+          }
+        } else {
+          input.removeAttribute('aria-activedescendant');
         }
       }
       function chooseStation(match) {
@@ -708,6 +873,9 @@
           var tip = document.createElement('a');
           tip.className = 'search-tip';
           tip.href = '#';
+          tip.id = 'search-opt-' + idx;
+          tip.setAttribute('role', 'option');
+          tip.setAttribute('aria-selected', 'false');
           tip.textContent = match.label;
           tip.style.display = 'block';
           tip.addEventListener('mousedown', function (event) {
@@ -719,12 +887,14 @@
         tooltip.style.display = '';
         tooltip.scrollTop = 0;
         selectedIdx = -1;
+        input.setAttribute('aria-expanded', 'true');
+        input.removeAttribute('aria-activedescendant');
       }
 
       input.addEventListener('input', function () {
         cancelBtn.style.display = input.value ? '' : 'none';
         var q = normalizeSearch(input.value);
-        if (!q) { hideTips(); return; }
+        if (!q) { hideTips(); announce(''); return; }
         currentMatches = searchIndex
           .filter(function (m) { return m.text.indexOf(q) !== -1; })
           .sort(function (a, b) {
@@ -732,6 +902,9 @@
             return pa - pb || (a.label < b.label ? -1 : a.label > b.label ? 1 : 0);
           });
         renderTips(currentMatches);
+        announce(currentMatches.length === 0 ? 'No stations found'
+          : currentMatches.length === 1 ? '1 station found'
+            : currentMatches.length + ' stations found');
       });
       input.addEventListener('keydown', function (event) {
         if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
@@ -745,7 +918,12 @@
           if (!currentMatches.length) return;
           chooseStation(currentMatches[selectedIdx >= 0 ? selectedIdx : 0]);
         } else if (event.key === 'Escape') {
-          hideTips();
+          if (currentMatches.length) {
+            // Consume the Esc for the dropdown; a second Esc reaches the
+            // document handler (closes the drawer / list view).
+            event.stopPropagation();
+            hideTips();
+          }
         }
       });
       input.addEventListener('blur', function () {
@@ -756,35 +934,137 @@
         input.value = '';
         cancelBtn.style.display = 'none';
         hideTips();
+        announce('');
         input.focus();
       });
     })();
 
-    routePreviewMarkers.forEach(function (marker) {
-      function handleMarkerEnter() {
-        var markerElement = markerVisualElement(marker);
-        if (markerElement) markerElement.classList.add('marker-hover-halo');
+    // Shared by mouse hover and keyboard focus (U1). U6 (S3c): a marker with
+    // no displayable route colors (SIR / shuttle-only stations ship
+    // routes: []) must not dim the rest of the map while highlighting no
+    // track — those markers get the halo + tooltip only.
+    function markerEnterVisuals(marker) {
+      var markerElement = markerVisualElement(marker);
+      if (markerElement) markerElement.classList.add('marker-hover-halo');
+      var previewColors = markerPreviewColors(marker);
+      if (previewColors.length) {
         setOtherMarkersDimmed(marker, true);
-        previewMarkerRoutes(marker);
+        highlightSubwayLines('preview', previewColors, null);
       }
-      function handleMarkerLeave() {
-        if (marker === selectedMarker) return;
-        var markerElement = markerVisualElement(marker);
-        if (markerElement) markerElement.classList.remove('marker-hover-halo');
-        if (selectedMarker) {
-          setOtherMarkersDimmed(selectedMarker, true);
-        } else {
-          setOtherMarkersDimmed(null, false);
-        }
-        restoreActiveHighlight();
+    }
+    function markerLeaveVisuals(marker) {
+      if (marker === selectedMarker) return;
+      var markerElement = markerVisualElement(marker);
+      if (markerElement) markerElement.classList.remove('marker-hover-halo');
+      if (selectedMarker) {
+        setOtherMarkersDimmed(selectedMarker, true);
+      } else {
+        setOtherMarkersDimmed(null, false);
       }
-      marker.on('mouseover', handleMarkerEnter);
-      marker.on('mouseout', handleMarkerLeave);
+      restoreActiveHighlight();
+    }
+    routePreviewMarkers.forEach(function (marker) {
+      marker.on('mouseover', function () { markerEnterVisuals(marker); });
+      marker.on('mouseout', function () { markerLeaveVisuals(marker); });
     });
 
     restoreActiveHighlight();
     updateMarkerOutlines();
     window._tweakSubway = { settings: subwaySettings, restore: restoreActiveHighlight };
+
+    // ── Roving tabindex over the marker index (U1, S3c) ─────────────────────
+    // One tab stop for all 362 elevator-bearing markers: Tab reaches the
+    // current marker, arrows walk stations alphabetically, Home/End jump,
+    // Enter opens the drawer, Esc (document-level) closes it. Markers whose
+    // tier layer is toggled off are skipped. Focus shows the hover halo and
+    // tooltip; aria-labels carry station, elevator ids, tier and risk words.
+    focusEntries.sort(function (a, b) {
+      return a.sortKey < b.sortKey ? -1 : a.sortKey > b.sortKey ? 1 : 0;
+    });
+    var currentFocusIdx = 0;
+    function entryElement(entry) {
+      return entry.marker.getElement && entry.marker.getElement();
+    }
+    function entryOnMap(entry) {
+      return !!entry.marker._map && !!entryElement(entry);
+    }
+    function nextOnMapIdx(from, delta) {
+      var n = focusEntries.length;
+      var i = from;
+      for (var step = 0; step < n; step += 1) {
+        i = (i + delta + n) % n;
+        if (entryOnMap(focusEntries[i])) return i;
+      }
+      return from;
+    }
+    function applyRovingTabindex() {
+      // Chrome walks bare SVG paths (track lines, no-elevator dots) in the
+      // tab order; pin them to -1 so Tab goes chrome → marker → controls.
+      document.querySelectorAll('#map path.leaflet-interactive:not([tabindex])')
+        .forEach(function (pathEl) { pathEl.setAttribute('tabindex', '-1'); });
+      if (!entryOnMap(focusEntries[currentFocusIdx])) {
+        currentFocusIdx = nextOnMapIdx(currentFocusIdx, 1);
+      }
+      focusEntries.forEach(function (entry, i) {
+        var elm = entryElement(entry);
+        if (!elm) return;
+        elm.setAttribute('tabindex', i === currentFocusIdx ? '0' : '-1');
+        if (elm._a11yWired) return;
+        elm._a11yWired = true;
+        elm.setAttribute('role', 'button');
+        elm.setAttribute('aria-label', entry.label);
+        elm.addEventListener('keydown', function (event) { markerKeydown(event, entry); });
+        elm.addEventListener('focus', function () {
+          currentFocusIdx = focusEntries.indexOf(entry);
+          markerEnterVisuals(entry.marker);
+          entry.marker.openTooltip();
+        });
+        elm.addEventListener('blur', function () {
+          entry.marker.closeTooltip();
+          markerLeaveVisuals(entry.marker);
+        });
+      });
+    }
+    function focusEntryAt(idx) {
+      currentFocusIdx = idx;
+      applyRovingTabindex();
+      var entry = focusEntries[idx];
+      var latlng = entry.marker.getLatLng();
+      if (!map.getBounds().pad(-0.08).contains(latlng)) {
+        map.panTo(latlng, { animate: !prefersReducedMotion() });
+      }
+      var elm = entryElement(entry);
+      if (elm) elm.focus({ preventScroll: true });
+    }
+    function markerKeydown(event, entry) {
+      var key = event.key;
+      if (key === 'Enter' || key === ' ' || key === 'Spacebar') {
+        event.preventDefault();
+        event.stopPropagation();
+        entry.activate();
+      } else if (key === 'ArrowRight' || key === 'ArrowDown') {
+        event.preventDefault();
+        event.stopPropagation();
+        focusEntryAt(nextOnMapIdx(focusEntries.indexOf(entry), 1));
+      } else if (key === 'ArrowLeft' || key === 'ArrowUp') {
+        event.preventDefault();
+        event.stopPropagation();
+        focusEntryAt(nextOnMapIdx(focusEntries.indexOf(entry), -1));
+      } else if (key === 'Home') {
+        event.preventDefault();
+        event.stopPropagation();
+        focusEntryAt(nextOnMapIdx(focusEntries.length - 1, 1));
+      } else if (key === 'End') {
+        event.preventDefault();
+        event.stopPropagation();
+        focusEntryAt(nextOnMapIdx(0, -1));
+      }
+    }
+    map.on('layeradd', function () {
+      // Re-added tier layers rebuild L.Marker icons — rewire fresh elements.
+      requestAnimationFrame(applyRovingTabindex);
+    });
+    applyRovingTabindex();
 
     // ── Legend card + layer toggles (port of MarkerLayerControl; audit C.7) ─
     var counts = { high: 0, medium: 0, low: 0 };
@@ -810,7 +1090,8 @@
       { id: 'high', layer: layerHigh, label: 'High risk &middot; ' + counts.high },
       { id: 'medium', layer: layerMedium, label: 'Medium risk &middot; ' + counts.medium },
       { id: 'low', layer: layerLow, label: 'Low risk &middot; ' + counts.low },
-      { id: 'no-elevator', layer: layerNoElevator, label: 'No-elevator stations &middot; ' + noElevatorCount }
+      { id: 'no-elevator', layer: layerNoElevator, label: 'No-elevator stations &middot; ' + noElevatorCount },
+      { id: 'unscored', layer: layerUnscored, label: 'Not scored &middot; ' + unscoredCount }
     ];
     var buttonContainer = document.getElementById('marker-layer-buttons');
     L.DomEvent.disableClickPropagation(buttonContainer);
@@ -837,6 +1118,7 @@
       medium: layerMedium,
       low: layerLow,
       noElevator: layerNoElevator,
+      unscored: layerUnscored,
       map: map
     };
 
@@ -848,9 +1130,11 @@
     var content = document.getElementById('elevator-detail-content');
     var previousCenter = null;
     var previousZoom = null;
+    var openerMarker = null;   // U1: focus returns here on close
 
     L.DomEvent.disableClickPropagation(panel);
     L.DomEvent.disableScrollPropagation(panel);
+    panel.setAttribute('inert', '');   // closed drawer is out of the tab order
 
     window.toggleAccordion = function (trigger) {
       var expanded = trigger.getAttribute('aria-expanded') === 'true';
@@ -859,9 +1143,21 @@
       if (body) body.classList.toggle('open', !expanded);
     };
 
-    function openPanel(marker, el) {
+    // U7 (S3c): the open drawer is a permalink — ?station=<complex_id> for
+    // humans, #el=<equipment_code> to pin the exact elevator. replaceState
+    // keeps Back for leaving the site, not for un-opening drawers.
+    function updateUrlForPanel(el) {
+      history.replaceState(null, '',
+        location.pathname + '?station=' + el.complex_id + '#el=' + encodeURIComponent(el.id));
+    }
+    function clearUrlState() {
+      history.replaceState(null, '', location.pathname);
+    }
+
+    function openPanel(marker, el, instant) {
       previousCenter = map.getCenter();
       previousZoom = map.getZoom();
+      openerMarker = marker;
       var targetZoom = 14;
       var markerPoint = map.project(marker.getLatLng(), targetZoom);
       var visibleAreaCenter = markerPoint.add([panel.offsetWidth / 2, 0]);
@@ -872,27 +1168,50 @@
 
       panel.classList.add('is-open');
       panel.setAttribute('aria-hidden', 'false');
+      panel.removeAttribute('inert');
       mapTitle.classList.add('drawer-open');
       rightTopPanel.classList.add('drawer-open');
       marker.closeTooltip();
       document.dispatchEvent(new CustomEvent('elevator-detail-open', { detail: { marker: marker } }));
-      map.flyTo(targetCenter, targetZoom, { duration: 1.2 });
+      flyOrSet(targetCenter, targetZoom, { duration: 1.2 }, instant);
+      updateUrlForPanel(el);
+      panel.focus({ preventScroll: true });   // U1: focus moves into the dialog
     }
     function closePanel() {
+      // U1: move focus back to the opening marker before hiding the drawer.
+      var openerElement = openerMarker && openerMarker._map &&
+        openerMarker.getElement && openerMarker.getElement();
+      if (openerElement && openerElement.focus) {
+        openerElement.focus({ preventScroll: true });
+      } else {
+        map.getContainer().focus({ preventScroll: true });
+      }
+      openerMarker = null;
       panel.classList.remove('is-open');
       panel.setAttribute('aria-hidden', 'true');
+      panel.setAttribute('inert', '');
       mapTitle.classList.remove('drawer-open');
       rightTopPanel.classList.remove('drawer-open');
       document.dispatchEvent(new CustomEvent('elevator-detail-close'));
       if (previousCenter && previousZoom !== null) {
-        map.flyTo(previousCenter, previousZoom, { duration: 1.2 });
+        flyOrSet(previousCenter, previousZoom, { duration: 1.2 });
       }
+      clearUrlState();
     }
     panel.addEventListener('click', function (event) {
       if (event.target && event.target.id === 'elevator-detail-close') {
         event.stopPropagation();
         closePanel();
       }
+    });
+    // U1: Esc closes the drawer from anywhere (the search dropdown consumes
+    // its own Esc first; the list view handler below runs earlier in the
+    // capture order via its own check).
+    document.addEventListener('keydown', function (event) {
+      if (event.key !== 'Escape') return;
+      var listView = document.getElementById('station-list-view');
+      if (listView && !listView.hidden) return;   // list view owns this Esc
+      if (panel.classList.contains('is-open')) closePanel();
     });
 
     // ── Drawer template (client-side mirror of the build_map.py builders) ───
@@ -1103,9 +1422,11 @@
       var whyCopyIntro = 'This score is produced via a machine-learning model trained on MTA records ' +
         'through ' + monthLabel(data.records_through) + ', estimating the chance this elevator ' +
         'will have an entrapment or 2+ unscheduled outages in ' + monthLabel(data.target_month) + '.';
+      var words = riskWords[el.tier] || {};
       return '<div class="maintenance-drawer tier-' + el.tier + '">' +
         '<div class="drawer-header">' +
-        '<span class="station-name">' + esc(el.station) + '</span>' +
+        // U10: the drawer dialog is labelled by the station name.
+        '<span class="station-name" id="drawer-title">' + esc(el.station) + '</span>' +
         '<div class="lines-row">' + headerBadgesHtml(el.routes) + '</div>' +
         '<button id="elevator-detail-close" type="button" aria-label="Close elevator details">&times;</button>' +
         '</div>' +
@@ -1118,6 +1439,8 @@
         '<strong>' + pct0(el.p) + '</strong>' +
         '<span>FAILURE PROBABILITY</span>' +
         '</div>' +
+        // U2: plain-language tier sentence (wording ships in elevators.json).
+        (words.sentence ? '<p class="risk-words">' + esc(words.sentence) + '</p>' : '') +
         '</header>' +
         '<section class="drawer-section drawer-section-risk">' +
         '<p class="why-copy">' + esc(whyCopyIntro) + '<br><br>' + esc('Key reliability signals:') + '</p>' +
@@ -1131,5 +1454,171 @@
         '<div class="methodology-note"><a href="' + REPO_URL + '" target="_blank" rel="noopener noreferrer">ⓘ&nbsp;&nbsp;How scores are made (open source on GitHub ↗)</a></div>' +
         '</div>';
     }
+
+    // ── Station list view (PLAN 3c; audit E2 crawlable hook) ────────────────
+    // Accessible table of every elevator, riskiest first, opened from the
+    // legend. Built eagerly so the content exists in the DOM for crawlers.
+    (function () {
+      var listView = document.getElementById('station-list-view');
+      var openBtn = document.getElementById('open-station-list');
+      var closeBtn = document.getElementById('station-list-close');
+      var note = document.getElementById('station-list-note');
+      var tbody = document.querySelector('#station-list-table tbody');
+      if (!listView || !openBtn || !tbody) return;
+
+      note.textContent = elevators.length + ' scored elevators, highest predicted ' +
+        'failure risk for ' + monthLabel(data.target_month) + ' first. The ' +
+        'unscored elevators at ' + unscoredCount + ' stations are listed at the end.';
+
+      var sorted = elevators.slice().sort(function (a, b) {
+        return b.p - a.p || (a.station < b.station ? -1 : a.station > b.station ? 1 : 0);
+      });
+      function addRow(cells, tierClass, tierText, showHandler) {
+        var tr = document.createElement('tr');
+        var th = document.createElement('th');
+        th.scope = 'row';
+        th.textContent = cells.station;
+        tr.appendChild(th);
+        [cells.routes, cells.code].forEach(function (text) {
+          var td = document.createElement('td');
+          td.textContent = text;
+          tr.appendChild(td);
+        });
+        var tierTd = document.createElement('td');
+        var tierSpan = document.createElement('span');
+        tierSpan.className = 'list-tier ' + tierClass;
+        tierSpan.textContent = tierText;
+        tierTd.appendChild(tierSpan);
+        tr.appendChild(tierTd);
+        var pTd = document.createElement('td');
+        pTd.className = 'num';
+        pTd.textContent = cells.p;
+        tr.appendChild(pTd);
+        var btnTd = document.createElement('td');
+        var showBtn = document.createElement('button');
+        showBtn.type = 'button';
+        showBtn.className = 'list-show-btn';
+        showBtn.textContent = 'Show on map';
+        showBtn.setAttribute('aria-label', 'Show ' + cells.station + ' ' + cells.code + ' on the map');
+        showBtn.addEventListener('click', showHandler);
+        btnTd.appendChild(showBtn);
+        tr.appendChild(btnTd);
+        tbody.appendChild(tr);
+      }
+      sorted.forEach(function (el) {
+        addRow(
+          { station: el.station, routes: el.routes.join(' '), code: el.display_id, p: pct0(el.p) },
+          'list-tier-' + el.tier, TIER_LABELS[el.tier],
+          function () {
+            closeListView(true);
+            var target = markersByElevatorId[el.id];
+            if (target) openPanel(target.marker, target.el);
+          }
+        );
+      });
+      stations.forEach(function (st) {
+        if (st.status !== 'unscored') return;
+        var reason = UNSCORED_REASONS[st.unscored_reason] || 'Not scored';
+        st.elevator_ids.forEach(function (id) {
+          addRow(
+            { station: st.name, routes: st.routes.join(' '), code: formatEquipmentCode(id), p: '—' },
+            'list-tier-unscored', reason,
+            function () {
+              closeListView(true);
+              map.setView([st.lat, st.lon], 15, { animate: false });
+            }
+          );
+        });
+      });
+
+      var INERT_BEHIND_LIST = ['map', 'map-title', 'right-top-panel', 'elevator-detail-panel'];
+      function openListView() {
+        listView.hidden = false;
+        INERT_BEHIND_LIST.forEach(function (id) {
+          var node = document.getElementById(id);
+          if (node) node.setAttribute('inert', '');
+        });
+        closeBtn.focus();
+      }
+      function closeListView(skipRefocus) {
+        listView.hidden = true;
+        INERT_BEHIND_LIST.forEach(function (id) {
+          // The drawer manages its own inert state (stays inert unless open).
+          if (id === 'elevator-detail-panel' && !panel.classList.contains('is-open')) return;
+          var node = document.getElementById(id);
+          if (node) node.removeAttribute('inert');
+        });
+        if (!skipRefocus) openBtn.focus();
+      }
+      openBtn.addEventListener('click', openListView);
+      closeBtn.addEventListener('click', function () { closeListView(false); });
+      listView.addEventListener('click', function (event) {
+        if (event.target === listView) closeListView(false);   // scrim click
+      });
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && !listView.hidden) closeListView(false);
+      });
+      L.DomEvent.disableClickPropagation(listView);
+      L.DomEvent.disableScrollPropagation(listView);
+    })();
+
+    // ── Mobile bottom-bar chrome (owner request 2026-07-15) ─────────────────
+    // ≤640px the search box and badge grid collapse into two thumb pills at
+    // the bottom (CSS moves #right-top-panel down there); the pills expand
+    // one panel at a time.
+    (function () {
+      var searchToggle = document.getElementById('mobile-search-toggle');
+      var filterToggle = document.getElementById('mobile-filter-toggle');
+      if (!searchToggle || !filterToggle) return;
+      function setMobilePanel(which) {
+        document.body.classList.toggle('mobile-search-open', which === 'search');
+        document.body.classList.toggle('mobile-filter-open', which === 'filter');
+        searchToggle.setAttribute('aria-expanded', which === 'search' ? 'true' : 'false');
+        filterToggle.setAttribute('aria-expanded', which === 'filter' ? 'true' : 'false');
+        if (which === 'search') {
+          var input = document.querySelector('#station-search-slot input.search-input');
+          if (input) input.focus();
+        }
+      }
+      searchToggle.addEventListener('click', function () {
+        setMobilePanel(document.body.classList.contains('mobile-search-open') ? null : 'search');
+      });
+      filterToggle.addEventListener('click', function () {
+        setMobilePanel(document.body.classList.contains('mobile-filter-open') ? null : 'filter');
+      });
+    })();
+
+    // ── Permalink boot (U7): /?station=<complex_id> and /#el=<code> ─────────
+    // A valid deep link skips the landing intro and opens the target state
+    // directly (instant view; no fly animation on load).
+    (function () {
+      var hashMatch = location.hash.match(/^#el=([^&]+)/);
+      var code = hashMatch ? decodeURIComponent(hashMatch[1]) : null;
+      var params = new URLSearchParams(location.search);
+      var stationId = parseInt(params.get('station'), 10);
+      var target = code && markersByElevatorId[code];
+      if (!target && !isNaN(stationId)) {
+        var best = null;
+        elevators.forEach(function (el) {
+          if (el.complex_id === stationId && (!best || el.p > best.p)) best = el;
+        });
+        if (best) target = markersByElevatorId[best.id];
+      }
+      if (target) {
+        if (dismissLanding) dismissLanding(true);
+        openPanel(target.marker, target.el, true);
+        return;
+      }
+      if (!isNaN(stationId) && stationsById[stationId]) {
+        var st = stationsById[stationId];
+        if (dismissLanding) dismissLanding(true);
+        map.setView([st.lat, st.lon], 15, { animate: false });
+        var unscoredEntry = null;
+        focusEntries.forEach(function (entry) {
+          if (st.status === 'unscored' && entry.sortKey === st.name + ' unscored') unscoredEntry = entry;
+        });
+        if (unscoredEntry) unscoredEntry.marker.openTooltip();
+      }
+    })();
   }
 })();

@@ -46,7 +46,7 @@
       "name": "NYC Subway Elevator Failure-Risk Predictions",
       "description": "Monthly failure-risk scores for 352 NYC subway elevators, predicting the likelihood of an entrapment or two or more unscheduled outages in the coming month. Derived from public MTA elevator and escalator availability data.",
       "url": "https://nycsubwayelevators.com/",
-      "dateModified": "2026-07-17T08:06:26Z",
+      "dateModified": "2026-07-21T08:47:03Z",
       "creator": {
         "@type": "Person",
         "name": "Jia Li"
@@ -68,16 +68,31 @@
 }
   </script>
   <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="app.css?v=20260717-080626">
+  <link rel="stylesheet" href="app.css?v=20260721-084703">
 </head>
 <body>
 
-  <div id="map"></div>
+  <div id="map" role="main" aria-label="Map of NYC subway elevator failure risk"></div>
 
-  <div id="map-title" class="glass">
-    <div style="font-size: 12px; color: #888; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px;">NYC SUBWAY</div>
+  <noscript>
+    <div style="max-width:640px;margin:40px auto;padding:0 20px;font-family:Georgia,serif;color:#1a1a1a;">
+      <h1>NYC Subway Elevator Reliability Map</h1>
+      <p>This interactive map needs JavaScript. It shows monthly machine-learning
+      failure-risk predictions for 352 elevators in NYC subway stations —
+      the likelihood each elevator has an entrapment or two or more unplanned
+      outages in the coming month — built independently from public
+      <a href="https://data.ny.gov/Transportation/MTA-NYCT-Subway-Elevator-and-Escalator-Availabilit/rc78-7x78/about_data">MTA availability data</a>.</p>
+      <p>The underlying data is open JSON, updated monthly:
+      <a href="/data/elevators.json">elevators.json</a> (per-elevator risk scores and history) and
+      <a href="/data/stations.json">stations.json</a> (all 445 station complexes).
+      Methodology: <a href="https://github.com/jiayili6812/mta-elevator-reliability">open source on GitHub</a>.</p>
+    </div>
+  </noscript>
+
+  <div id="map-title" class="glass" role="region" aria-label="Legend and map layers">
+    <div style="font-size: 12px; color: #666; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px;">NYC SUBWAY</div>
     <div style="font-size: 18px; font-weight: 800; color: #1a1a1a; line-height: 1.2; margin-bottom: 7px;">Elevator Reliability Map</div>
-    <div id="legend-subtitle" style="font-size: 12px; color: #888; line-height: 1.5; margin-bottom: 13px;"></div>
+    <div id="legend-subtitle" style="font-size: 12px; color: #666; line-height: 1.5; margin-bottom: 13px;"></div>
 
     <div id="hairline-top" style="border-top: 1px solid rgba(0,0,0,0.10); padding-top: 10px;">
       <div id="marker-layer-buttons" style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 9px;">
@@ -97,20 +112,29 @@
           <span class="marker-layer-icon"><span class="marker-layer-no-elevator"></span></span>
           <span></span>
         </button>
+        <button class="marker-layer-button" data-marker-layer="unscored" type="button" aria-pressed="true">
+          <span class="marker-layer-icon"><span class="marker-layer-unscored"></span></span>
+          <span></span>
+        </button>
       </div>
+      <button id="open-station-list" type="button">Browse all elevators as a list</button>
     </div>
 
-    <div id="hairline-bottom" style="border-top: 1px solid rgba(0,0,0,0.10); padding-top: 10px; margin-top: 10px; font-size: 12px; color: #888; line-height: 1.5; font-family: Georgia, serif;"></div>
+    <div id="hairline-bottom" style="border-top: 1px solid rgba(0,0,0,0.10); padding-top: 10px; margin-top: 10px; font-size: 12px; color: #666; line-height: 1.5; font-family: Georgia, serif;"></div>
   </div>
 
-  <div id="right-top-panel">
+  <div id="right-top-panel" role="region" aria-label="Station search and line filter">
 
-  <div id="station-search-slot" aria-label="Station search">
+  <div id="station-search-slot" role="search" aria-label="Station search">
     <div class="leaflet-control-search">
-      <input class="search-input" type="text" placeholder=" " autocomplete="off" spellcheck="false" aria-label="Search station">
-      <div class="search-placeholder"><span>Search station or filter by line below</span></div>
-      <a class="search-cancel" href="#" role="button" aria-label="Clear search" style="display:none"></a>
-      <div class="search-tooltip" style="display:none"></div>
+      <input class="search-input" id="station-search-input" type="text" placeholder=" "
+        autocomplete="off" spellcheck="false" aria-label="Search station"
+        role="combobox" aria-expanded="false" aria-controls="station-search-listbox"
+        aria-autocomplete="list">
+      <div class="search-placeholder" aria-hidden="true"><span>Search station or filter by line below</span></div>
+      <button class="search-cancel" type="button" aria-label="Clear search" style="display:none"></button>
+      <div class="search-tooltip" id="station-search-listbox" role="listbox" aria-label="Matching stations" style="display:none"></div>
+      <div id="search-results-status" class="visually-hidden" role="status"></div>
     </div>
   </div>
 
@@ -145,37 +169,62 @@
     </div>
   </div>
 
+  <div id="mobile-chrome-bar">
+    <button id="mobile-search-toggle" type="button" aria-expanded="false" aria-controls="station-search-slot">
+      <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="16.65" y1="16.65" x2="21" y2="21"/></svg>
+      Search
+    </button>
+    <button id="mobile-filter-toggle" type="button" aria-expanded="false" aria-controls="subway-route-badges">Filter by line</button>
+  </div>
+
   </div><!-- #right-top-panel -->
 
-  <aside id="elevator-detail-panel" aria-hidden="true" aria-label="Elevator details">
+  <aside id="elevator-detail-panel" role="dialog" aria-labelledby="drawer-title" aria-hidden="true" aria-label="Elevator details" tabindex="-1">
     <div id="elevator-detail-content"></div>
   </aside>
 
-  <div id="landing-overlay">
+  <div id="station-list-view" role="dialog" aria-modal="true" aria-labelledby="station-list-title" hidden>
+    <div id="station-list-card">
+      <header id="station-list-header">
+        <h2 id="station-list-title">All elevators by predicted risk</h2>
+        <button id="station-list-close" type="button" aria-label="Close elevator list">&times;</button>
+      </header>
+      <p id="station-list-note"></p>
+      <div id="station-list-scroll" tabindex="0" role="region" aria-labelledby="station-list-title">
+        <table id="station-list-table">
+          <thead>
+            <tr><th scope="col">Station</th><th scope="col">Lines</th><th scope="col">Elevator</th><th scope="col">Risk tier</th><th scope="col">Failure probability</th><th scope="col"><span class="visually-hidden">Actions</span></th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="landing-overlay" role="dialog" aria-modal="true" aria-labelledby="landing-title">
     <nav id="landing-nav">
       <span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;border:0.5px solid rgba(255,255,255,0.88);font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:10px;font-weight:400;color:rgba(255,255,255,0.88);">J</span>
       <span style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:10px;font-weight:400;letter-spacing:0.18em;color:rgba(255,255,255,0.88);text-transform:uppercase;">Contact</span>
     </nav>
 
     <div style="text-align:center;padding:0 24px;">
-      <p style="margin:0 0 14px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12px;font-weight:400;letter-spacing:2.5px;color:rgba(255,255,255,0.72);text-transform:uppercase;">Subway <span style="font-size:8px;vertical-align:8px;letter-spacing:0.5px;text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px;">NYC</span></p>
-      <h1 style="margin:0 0 16px;font-family:Georgia,serif;font-size:46px;font-weight:400;letter-spacing:10px;line-height:1.15;color:rgba(255,255,255,0.93);text-transform:uppercase;">Elevator<br>Reliability Map</h1>
-      <p id="landing-subtitle" style="margin:0 0 26px;font-family:Georgia,serif;font-size:14px;font-weight:400;letter-spacing:0px;line-height:1.5;color:rgba(255,255,255,0.72);">See predicted outage risk scores</p>
+      <p style="margin:0 0 14px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12px;font-weight:400;letter-spacing:2.5px;color:rgba(255,255,255,0.92);text-transform:uppercase;">Subway <span style="font-size:8px;vertical-align:8px;letter-spacing:0.5px;text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px;">NYC</span></p>
+      <h1 id="landing-title" style="margin:0 0 16px;font-family:Georgia,serif;font-size:46px;font-weight:400;letter-spacing:10px;line-height:1.15;color:rgba(255,255,255,0.93);text-transform:uppercase;">Elevator<br>Reliability Map</h1>
+      <p id="landing-subtitle" style="margin:0 0 26px;font-family:Georgia,serif;font-size:14px;font-weight:400;letter-spacing:0px;line-height:1.5;color:rgba(255,255,255,0.92);">See predicted outage risk scores</p>
       <button id="explore-btn">Explore</button>
     </div>
 
-    <p style="position:absolute;bottom:22px;left:50%;transform:translateX(-50%);margin:0;white-space:nowrap;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:10px;font-weight:400;letter-spacing:1px;text-transform:uppercase;text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px;color:rgba(255,255,255,0.72);">Independent project using public data &middot; Not affiliated with the MTA</p>
+    <p id="landing-footnote" style="position:absolute;bottom:22px;left:50%;transform:translateX(-50%);margin:0;white-space:nowrap;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:10px;font-weight:400;letter-spacing:1px;text-transform:uppercase;text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px;color:rgba(255,255,255,0.92);">Independent project using public data &middot; Not affiliated with the MTA</p>
 
     <div id="privacy-bubble">
-      <button id="privacy-close-btn" aria-label="Close privacy notice">&times;</button>
-      <h3>We value your privacy</h3>
-      <p>This website uses anonymized interaction data to improve public transit tools. No personal information is collected or stored.</p>
-      <a href="#">Do not share my personal information</a>
+      <button id="privacy-close-btn" aria-label="Close privacy note">&times;</button>
+      <h2>No tracking here</h2>
+      <p>This site collects no personal data &mdash; no cookies, no tracking. Built independently from public MTA data.</p>
     </div>
 
   </div>
 
   <script src="vendor/leaflet/leaflet.js"></script>
-  <script src="app.js?v=20260717-080626"></script>
+  <script src="app.js?v=20260721-084703"></script>
 </body>
 </html>
