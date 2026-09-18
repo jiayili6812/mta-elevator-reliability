@@ -159,7 +159,7 @@
   // Explore flies back out to DEFAULT_ZOOM (audit C.1).
   map.setView([DEFAULT_LAT, DEFAULT_LNG], LANDING_ZOOM, { animate: false });
   L.control.scale().addTo(map);
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png?key=cb1_3q4p_1_693862d86debd7d5e0aa3ea9', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
     maxZoom: 19
   }).addTo(map);
