@@ -16,7 +16,7 @@ This project is a start at turning that kind of knowledge into something more op
 
 ## What it does
 
-A Random Forest model scores 352 NYC subway elevators by their likelihood of failing in the coming month. "Failure" means an entrapment or two or more unscheduled outages. Every prediction is plotted on an interactive WebGL map — click any elevator to see its risk score, the reliability signals behind it, and nearby alternatives for backup route planning.
+A Random Forest model scores 357 NYC subway elevators by their likelihood of failing in the coming month. "Failure" means an entrapment or two or more unscheduled outages. Every prediction is plotted on an interactive WebGL map — click any elevator to see its risk score, the reliability signals behind it, and nearby alternatives for backup route planning.
 
 This is a planning and chronic-reliability layer, not a real-time trip tool. MTA's live feed tells you whether an elevator is broken right now; this model captures persistent degradation (the pattern of an elevator that keeps failing).
 
@@ -26,15 +26,15 @@ This is a planning and chronic-reliability layer, not a real-time trip tool. MTA
 
 ![MTA Elevator Risk — Technical Pipeline](docs/technical_pipeline.png)
 
-**Data:** Monthly elevator availability records from the MTA, sourced from [data.ny.gov](https://data.ny.gov/Transportation/MTA-NYCT-Subway-Elevator-and-Escalator-Availabilit/rc78-7x78/about_data) (`rc78-7x78`), through May 2026.
+**Data:** Monthly elevator availability records from the MTA, sourced from [data.ny.gov](https://data.ny.gov/Transportation/MTA-NYCT-Subway-Elevator-and-Escalator-Availabilit/rc78-7x78/about_data) (`rc78-7x78`), through September 2026.
 
 **Target:** For each elevator-month, the model predicts whether the next month will include an entrapment or two or more unscheduled outages.
 
-**Model:** Random Forest, trained on operational history features (outage rates, availability trends, seasonal patterns). Equipment age is deliberately excluded — it isn't a reliable predictor in this dataset.
+**Model:** Random Forest, trained on operational history features (current outages and availability, lags, and rolling histories). Equipment age is deliberately excluded — it isn't a reliable predictor in this dataset.
 
-**Performance:** Validated at ~72% recall (64–78% across eleven months, June 2025–April 2026) on historical predictions. ROC-AUC ~0.71, PR-AUC ~0.65. The current June 2026 scores are forecasts and not yet gradeable — June outcomes won't be in MTA's data until the next cycle.
+**Performance:** Historical predictions using June 2025–August 2026 feature months (July 2025–September 2026 outcomes) have 72.2% recall, ROC-AUC 0.712, and PR-AUC 0.652 over 5,191 elevator-months. The October 2026 forecast uses September features and has unknown outcomes. This prospective evaluation does not change the locked model or its one-time frozen-test results.
 
-**Threshold vs. display:** The map highlights the highest-confidence predictions (≥0.65) for visual clarity, showing 63 high-risk and 136 medium-risk elevators. The model's actual decision threshold is 0.443, which flags 199 elevators and is the basis for all reported performance.
+**Threshold vs. display:** The map highlights the highest-confidence predictions (≥0.65) for visual clarity, showing 73 high-risk and 112 medium-risk elevators (172 low risk). The model's actual decision threshold is 0.4433219097353501, which flags 185 elevators and is the basis for all reported performance.
 
 ---
 
@@ -42,10 +42,12 @@ This is a planning and chronic-reliability layer, not a real-time trip tool. MTA
 
 - **Data lag:** MTA records are published monthly; the model can only score what's been reported.
 - **Reporting reliance:** The training labels come from MTA's own maintenance records. Whatever goes unreported doesn't get learned.
-- **Historical-only recall:** The ~72% figure describes past predictions with known outcomes. The live June 2026 batch is ungraded until outcomes are published.
-- **Cold start:** 28 of the 352 scored elevators weren't in the training cohort; 4 have exactly the minimum history window (6 months). Their scores carry more uncertainty.
+- **Historical-only recall:** The ~72% figure describes past predictions with known outcomes. The live October 2026 batch is ungraded until outcomes are published.
+- **Coverage:** September reports 419 elevators. The locked rules exclude 51 X-suffixed elevators and 11 with fewer than six consecutive months of history. All 62 unscored elevators are listed on the map, including those sharing stations with scored elevators.
+- **Missing availability:** Six scored elevators have zero reported service hours in September. Their availability is undefined and the locked model applies its saved median imputer. The map marks missing measurements; a score is not evidence that an elevator is operating.
+- **Cold start:** 33 of the 357 scored elevators weren't in the training cohort; 1 has exactly the minimum history window (6 months). Their scores carry more uncertainty.
 - **Crowdsourced rider reporting** would add a different and important vantage point — ground truth from the people the system fails, not just what gets logged.
-- **317 stations have no elevator at all.** The model can only work with what exists.
+- **312 station complexes in the map's station lookup have no elevator records in the current source.** The model can only work with what exists.
 
 This is a start at treating access as something measurable and plannable — not just something to react to.
 

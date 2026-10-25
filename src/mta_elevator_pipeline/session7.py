@@ -131,7 +131,10 @@ def _latest_unlabeled_predictions(config: dict) -> dict[str, object]:
         "medium_display_cutoff": MEDIUM_RISK_CUTOFF,
         "risk_tier_note": "Risk tiers are for communication/display only; the locked decision threshold is unchanged.",
         "evaluated": False,
-        "evaluation_reason": "May 2026 outcomes are unavailable in the latest source data ending April 2026.",
+        "evaluation_reason": (
+            f"{target_month:%B %Y} outcomes are unavailable in the latest source "
+            f"data ending {latest_month:%B %Y}."
+        ),
         "model_path": str(LOCKED_MODEL),
         "model_version": MODEL_VERSION,
         "model_type": MODEL_TYPE,
@@ -200,7 +203,7 @@ def _metrics_comparison() -> pd.DataFrame:
         },
         {
             "stage": "prospective_external",
-            "period": "2025-06-01 through 2026-03-01",
+            "period": f"{min(prospective['cohort']['months'])} through {max(prospective['cohort']['months'])}",
             "rows": prospective["cohort"]["rows"],
             "elevators": prospective["cohort"]["elevators"],
             "prevalence": prospective["cohort"]["prevalence"],
@@ -273,8 +276,8 @@ Development validation selected the target, feature set, model family,
 parameters, calibration policy, and threshold. Frozen-test evaluation was the
 one-time final holdout evaluation. Prospective external evaluation checked the
 unchanged locked model on later target-known months. Latest unlabeled
-prediction generation applies the locked model to April 2026 features for May
-2026 risk and is not an evaluation.
+prediction generation applies the locked model to {metadata['prediction_month']}
+features for {metadata['predicted_target_month']} risk and is not an evaluation.
 
 {table}
 
@@ -327,7 +330,7 @@ The model catches many next-month qualifying failures: frozen-test recall was
 It misses some failures: frozen-test false negatives were
 `{frozen['overall_metrics']['false_negatives']}` over three months, and
 prospective false negatives were `{prospective['overall_metrics']['false_negatives']}`
-over ten later target-known months.
+over {len(prospective['cohort']['months'])} later target-known months.
 
 A false alarm means the elevator was flagged at or above the locked threshold
 but did not have the target event next month. It should be interpreted as an
@@ -400,9 +403,10 @@ Risk tiers are display labels only:
 - `medium`: probability >= `0.30` and < `{LOCKED_THRESHOLD}`
 - `low`: probability < `0.30`
 
-The operational decision threshold is not changed by these tiers. May 2026
-outcomes are unavailable, so this file must not be treated as evaluated
-performance data.
+The operational decision threshold is not changed by these tiers.
+{metadata['evaluation_reason']} This file must not be treated as evaluated
+performance data. The map's frontend handoff separately applies its public
+display cutoffs (high >= 0.65, medium >= the locked threshold, low below it).
 """
     project_path(FRONTEND_SCHEMA).write_text(schema, encoding="utf-8")
 

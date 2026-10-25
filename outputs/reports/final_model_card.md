@@ -17,22 +17,22 @@ Development validation selected the target, feature set, model family,
 parameters, calibration policy, and threshold. Frozen-test evaluation was the
 one-time final holdout evaluation. Prospective external evaluation checked the
 unchanged locked model on later target-known months. Latest unlabeled
-prediction generation applies the locked model to April 2026 features for May
-2026 risk and is not an evaluation.
+prediction generation applies the locked model to 2026-09-01
+features for 2026-10-01 risk and is not an evaluation.
 
 | Stage | Period | Rows | PR-AUC | Precision | Recall | FP | FN |
 |---|---|---:|---:|---:|---:|---:|---:|
 | development_validation | rolling validation; operating metrics on 2024-11-01 through 2025-01-01 | 966 | 0.715758 | 0.626223 | 0.706402 | 191 | 133 |
 | frozen_test | 2025-02-01 through 2025-04-01 | 974 | 0.648004 | 0.526316 | 0.694087 | 243 | 119 |
-| prospective_external | 2025-06-01 through 2026-03-01 | 3425 | 0.653008 | 0.564278 | 0.714476 | 827 | 428 |
+| prospective_external | 2025-06-01 through 2026-08-01 | 5191 | 0.652072 | 0.558388 | 0.721728 | 1282 | 625 |
 
 ## Latest Unlabeled Prediction Output
 
-- Prediction month: `2026-04-01`
-- Predicted target month: `2026-05-01`
-- Rows: `348`
+- Prediction month: `2026-09-01`
+- Predicted target month: `2026-10-01`
+- Rows: `357`
 - Evaluated: `false`
-- Reason not evaluated: May 2026 outcomes are unavailable in the latest source data ending April 2026.
+- Reason not evaluated: October 2026 outcomes are unavailable in the latest source data ending September 2026.
 
 ## Appropriate Uses
 

@@ -9,11 +9,11 @@ frozen test.
 
 The model catches many next-month qualifying failures: frozen-test recall was
 `0.694087` and prospective recall was
-`0.714476` at the locked threshold.
+`0.721728` at the locked threshold.
 It misses some failures: frozen-test false negatives were
 `119` over three months, and
-prospective false negatives were `428`
-over ten later target-known months.
+prospective false negatives were `625`
+over 15 later target-known months.
 
 A false alarm means the elevator was flagged at or above the locked threshold
 but did not have the target event next month. It should be interpreted as an
@@ -35,12 +35,12 @@ as the same evaluated research model.
 
 ## Latest Prediction Batch
 
-- Prediction month: `2026-04-01`
-- Predicted target month: `2026-05-01`
-- Prediction rows: `348`
-- High risk: `203`
-- Medium risk: `102`
-- Low risk: `43`
+- Prediction month: `2026-09-01`
+- Predicted target month: `2026-10-01`
+- Prediction rows: `357`
+- High risk: `185`
+- Medium risk: `131`
+- Low risk: `41`
 
 Risk tiers are for communication/display only. The locked operational decision
 threshold remains `0.4433219097353501`.

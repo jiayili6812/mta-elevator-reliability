@@ -208,3 +208,28 @@ interpretation or future modeling:
 - Subway-line geometries.
 - Cluster assignments.
 - Map or frontend files.
+
+## October 2026 refresh
+
+Official export retrieved 2026-10-25T23:11:44Z from
+`https://data.ny.gov/api/views/rc78-7x78/rows.csv?accessType=DOWNLOAD`.
+SHA-256: `a0f37b3b18e8d3058e399af9781435bd87945ae2d6f5bfb66cb1d993aae5837d`.
+The portal reports its last row update at 2026-10-23T15:08:37Z.
+83,776 rows, 22 columns, January 2015–September 2026. September is the
+latest complete usable month: every prior active asset is retained, there are
+no monthly reporting gaps, and the predominant full-month denominators are
+720 daily hours and 120 hours for each peak period. The export contains 419
+elevators and 278 escalators in September.
+
+Compared with the May snapshot, ten elevators were added and none removed,
+renamed or reclassified. Availability changed from percent strings to numeric
+proportions; after normalization, historical values are unchanged within
+1e-9 (largest hours difference 3.53e-12). Missing availability corresponds
+exactly to zero reported hours, not missing rows; these values are retained
+for the locked model's saved imputer. The fixed training snapshot is unchanged.
+
+Session 6 rebuilds the canonical file (25,309 elevator-months, January
+2021–September 2026); Session 7 uses it to forecast October. There are 357
+scored elevators, 51 excluded X-suffix elevators, and 11 below the unchanged
+six-consecutive-month requirement. Six scored elevators have undefined
+September availability because reported service hours are zero.

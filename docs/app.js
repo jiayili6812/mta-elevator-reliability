@@ -1240,18 +1240,19 @@
     function lastMonthHtml(el) {                         // last_month_html()
       var lm = el.last_month;
       if (!lm) return '';
-      var downtimeLabel = (lm.downtime_h === null || lm.downtime_h === undefined) ? '' : pyfmt(lm.downtime_h, 1) + 'h';
+      var downtimeLabel = (lm.downtime_h === null || lm.downtime_h === undefined) ? '—' : pyfmt(lm.downtime_h, 1) + 'h';
       var entrapmentLabel = lm.entrapments === 1 ? 'entrapment' : 'entrapments';
       return '<div class="flat-stats">' +
         '<div class="flat-stat' + (lm.entrapments > 0 ? ' is-alert' : '') + '"><strong>' + lm.entrapments + '</strong><span>' + entrapmentLabel + '</span></div>' +
         '<div class="flat-stat"><strong>' + lm.unplanned + '</strong><span>unplanned outages</span></div>' +
         '<div class="flat-stat"><strong>' + downtimeLabel + '</strong><span>total downtime</span></div>' +
-        '</div>';
+        '</div>' + (lm.reported_hours === 0 ?
+          '<p class="why-copy">MTA reported zero service hours this month. Availability and downtime are unavailable. This is not a live service status.</p>' : '');
     }
 
     function trendSvgHtml(el) {                          // trend_svg_html()
       var trend = el.trend;
-      if (!trend || trend.length < 2) return '';
+      if (!trend || trend.length < 2) return '<p class="why-copy">Fewer than two availability measurements were reported in the latest six months.</p>';
       var width = 260, height = 44;
       var left = 12, right = 12, top = 8, bottom = 16;
       var chartW = width - left - right;
@@ -1419,7 +1420,7 @@
 
     function renderDetail(el) {                          // make_detail_html()
       var suffix = el.id.replace(/[^a-zA-Z0-9_-]+/g, '-').replace(/^-+|-+$/g, '').toLowerCase() || 'elevator';
-      var whyCopyIntro = 'This score is produced via a machine-learning model trained on MTA records ' +
+      var whyCopyIntro = 'This score is produced by a machine-learning model using MTA records ' +
         'through ' + monthLabel(data.records_through) + ', estimating the chance this elevator ' +
         'will have an entrapment or 2+ unscheduled outages in ' + monthLabel(data.target_month) + '.';
       var words = riskWords[el.tier] || {};
@@ -1441,12 +1442,15 @@
         '</div>' +
         // U2: plain-language tier sentence (wording ships in elevators.json).
         (words.sentence ? '<p class="risk-words">' + esc(words.sentence) + '</p>' : '') +
+        (el.last_month && el.last_month.reported_hours === 0 ?
+          '<p class="why-copy">No service hours were reported for ' + esc(monthLabel(data.records_through)) +
+          '. This forecast has incomplete availability data; check current elevator status before traveling.</p>' : '') +
         '</header>' +
         '<section class="drawer-section drawer-section-risk">' +
         '<p class="why-copy">' + esc(whyCopyIntro) + '<br><br>' + esc('Key reliability signals:') + '</p>' +
         '<div class="risk-driver-list">' + riskDriversHtml(el) + '</div>' +
         '</section>' +
-        accordionHtml('Last Month Performance', 'last-month-body-' + suffix, lastMonthHtml(el), '') +
+        accordionHtml(monthLabel(data.records_through) + ' Performance', 'last-month-body-' + suffix, lastMonthHtml(el), '') +
         accordionHtml('6-Month Trend', 'trend-body-' + suffix, trendSvgHtml(el), 'no-top-pad') +
         accordionHtml('Seasonal Patterns', 'peak-body-' + suffix, seasonalHtml(el), 'no-top-pad') +
         accordionHtml('Historical Signals', 'signals-body-' + suffix, historicalHtml(el), '') +
@@ -1468,7 +1472,8 @@
 
       note.textContent = elevators.length + ' scored elevators, highest predicted ' +
         'failure risk for ' + monthLabel(data.target_month) + ' first. The ' +
-        'unscored elevators at ' + unscoredCount + ' stations are listed at the end.';
+        stations.reduce(function (n, st) { return n + (st.unscored_elevators || []).length; }, 0) +
+        ' unscored elevators are listed at the end, including those at stations with scored elevators.';
 
       var sorted = elevators.slice().sort(function (a, b) {
         return b.p - a.p || (a.station < b.station ? -1 : a.station > b.station ? 1 : 0);
@@ -1517,11 +1522,10 @@
         );
       });
       stations.forEach(function (st) {
-        if (st.status !== 'unscored') return;
-        var reason = UNSCORED_REASONS[st.unscored_reason] || 'Not scored';
-        st.elevator_ids.forEach(function (id) {
+        (st.unscored_elevators || []).forEach(function (el) {
+          var reason = UNSCORED_REASONS[el.reason] || 'Not scored';
           addRow(
-            { station: st.name, routes: st.routes.join(' '), code: formatEquipmentCode(id), p: '—' },
+            { station: st.name, routes: st.routes.join(' '), code: formatEquipmentCode(el.id), p: '—' },
             'list-tier-unscored', reason,
             function () {
               closeListView(true);

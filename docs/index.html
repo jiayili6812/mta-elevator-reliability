@@ -3,24 +3,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NYC Subway Elevator Reliability Map — Live Failure-Risk Predictions for 352 Elevators</title>
+  <title>NYC Subway Elevator Reliability Map — Live Failure-Risk Predictions for 357 Elevators</title>
   <!-- This shell is root-ready (audit C.10). The docs/v2/ preview build injects
        a robots-exclusion meta + "v2 preview" title at assemble time; the root
        cutover build ships this head as-is. -->
-  <meta name="description" content="An interactive map of NYC subway elevator failure risk. A machine-learning model scores 352 elevators by their likelihood of failing in the coming month, using public MTA availability data updated monthly.">
+  <meta name="description" content="An interactive map of NYC subway elevator failure risk. A machine-learning model scores 357 elevators by their likelihood of failing in October 2026, using public MTA availability data updated monthly.">
   <meta name="author" content="Jia Li">
   <link rel="canonical" href="https://nycsubwayelevators.com/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="NYC Subway Elevator Reliability Map">
   <meta property="og:title" content="NYC Subway Elevator Reliability Map">
-  <meta property="og:description" content="An interactive map of NYC subway elevator failure risk — machine-learning predictions for 352 elevators, updated monthly from public MTA data.">
+  <meta property="og:description" content="An interactive map of NYC subway elevator failure risk — machine-learning predictions for 357 elevators, updated monthly from public MTA data.">
   <meta property="og:url" content="https://nycsubwayelevators.com/">
   <meta property="og:image" content="https://nycsubwayelevators.com/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="NYC Subway Elevator Reliability Map">
-  <meta name="twitter:description" content="An interactive map of NYC subway elevator failure risk — machine-learning predictions for 352 elevators, updated monthly from public MTA data.">
+  <meta name="twitter:description" content="An interactive map of NYC subway elevator failure risk — machine-learning predictions for 357 elevators, updated monthly from public MTA data.">
   <meta name="twitter:image" content="https://nycsubwayelevators.com/og-image.png">
   <link rel="icon" type="image/png" sizes="48x48" href="/favicon.png">
   <script type="application/ld+json">
@@ -31,7 +31,7 @@
       "@type": "WebApplication",
       "name": "NYC Subway Elevator Reliability Map",
       "url": "https://nycsubwayelevators.com/",
-      "description": "An interactive map of NYC subway elevator failure risk. A machine-learning model scores 352 subway elevators by their likelihood of failing in the coming month, based on public MTA availability data.",
+      "description": "An interactive map of NYC subway elevator failure risk. A machine-learning model scores 357 subway elevators by their likelihood of failing in October 2026, based on public MTA availability data.",
       "applicationCategory": "Transportation",
       "operatingSystem": "Any",
       "browserRequirements": "Requires a modern web browser with JavaScript enabled.",
@@ -44,9 +44,9 @@
     {
       "@type": "Dataset",
       "name": "NYC Subway Elevator Failure-Risk Predictions",
-      "description": "Monthly failure-risk scores for 352 NYC subway elevators, predicting the likelihood of an entrapment or two or more unscheduled outages in the coming month. Derived from public MTA elevator and escalator availability data.",
+      "description": "Monthly failure-risk scores for 357 NYC subway elevators, predicting the likelihood of an entrapment or two or more unscheduled outages in October 2026. Derived from public MTA elevator and escalator availability data.",
       "url": "https://nycsubwayelevators.com/",
-      "dateModified": "2026-09-18T20:31:24Z",
+      "dateModified": "2026-10-25T23:22:13Z",
       "creator": {
         "@type": "Person",
         "name": "Jia Li"
@@ -68,7 +68,7 @@
 }
   </script>
   <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="app.css?v=20260918-203124">
+  <link rel="stylesheet" href="app.css?v=20261025-232213">
 </head>
 <body>
 
@@ -78,9 +78,9 @@
     <div style="max-width:640px;margin:40px auto;padding:0 20px;font-family:Georgia,serif;color:#1a1a1a;">
       <h1>NYC Subway Elevator Reliability Map</h1>
       <p>This interactive map needs JavaScript. It shows monthly machine-learning
-      failure-risk predictions for 352 elevators in NYC subway stations —
+      failure-risk predictions for 357 elevators in NYC subway stations —
       the likelihood each elevator has an entrapment or two or more unplanned
-      outages in the coming month — built independently from public
+      outages in October 2026 using records through September 2026 — built independently from public
       <a href="https://data.ny.gov/Transportation/MTA-NYCT-Subway-Elevator-and-Escalator-Availabilit/rc78-7x78/about_data">MTA availability data</a>.</p>
       <p>The underlying data is open JSON, updated monthly:
       <a href="/data/elevators.json">elevators.json</a> (per-elevator risk scores and history) and
@@ -140,9 +140,9 @@
 
   <div id="subway-route-badges" class="route-badge-grid" data-badge-style="C" aria-label="New York City subway routes">
     <div class="route-badge-row">
-      <button class="subway-legend-swatch route-badge" data-subway-color="#EE352E" aria-label="1 train">1</button>
-      <button class="subway-legend-swatch route-badge" data-subway-color="#EE352E" aria-label="2 train">2</button>
-      <button class="subway-legend-swatch route-badge" data-subway-color="#EE352E" aria-label="3 train">3</button>
+      <button class="subway-legend-swatch route-badge" data-subway-color="#EE357E" aria-label="1 train">1</button>
+      <button class="subway-legend-swatch route-badge" data-subway-color="#EE357E" aria-label="2 train">2</button>
+      <button class="subway-legend-swatch route-badge" data-subway-color="#EE357E" aria-label="3 train">3</button>
       <button class="subway-legend-swatch route-badge" data-subway-color="#FF6319" aria-label="B train">B</button>
       <button class="subway-legend-swatch route-badge" data-subway-color="#FF6319" aria-label="D train">D</button>
       <button class="subway-legend-swatch route-badge" data-subway-color="#FF6319" aria-label="F train">F</button>
@@ -225,6 +225,6 @@
   </div>
 
   <script src="vendor/leaflet/leaflet.js"></script>
-  <script src="app.js?v=20260918-203124"></script>
+  <script src="app.js?v=20261025-232213"></script>
 </body>
 </html>

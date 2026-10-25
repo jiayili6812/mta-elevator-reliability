@@ -1,10 +1,10 @@
 {
   "status": "completed",
-  "created_at_utc": "2026-06-20T06:39:09.743544+00:00",
+  "created_at_utc": "2026-10-25T23:13:18.027877+00:00",
   "source": {
-    "path": "/content/mta-elevator-pipeline/data/external/MTA_NYCT_Subway_Elevator_and_Escalator_Availability__Beginning_2015.csv",
-    "sha256": "635ad215191d269a0ad4d14e05ec09bbc5339dcb8acf638cf345189577b70a3a",
-    "rows": 80316,
+    "path": "/Users/jiali/mta-elevators/mta-elevator-risk-repo/data/external/MTA_NYCT_Subway_Elevator_and_Escalator_Availability__Beginning_2015.csv",
+    "sha256": "a0f37b3b18e8d3058e399af9781435bd87945ae2d6f5bfb66cb1d993aae5837d",
+    "rows": 83776,
     "columns": [
       "Month",
       "Borough",
@@ -30,18 +30,18 @@
       "Station Complex MRN"
     ],
     "start_month": "2015-01-01",
-    "end_month": "2026-04-01",
+    "end_month": "2026-09-01",
     "equipment_rows_by_type": {
-      "Elevator": 43910,
-      "Escalator": 36406
+      "Elevator": 45980,
+      "Escalator": 37796
     },
-    "equipment_count": 690,
+    "equipment_count": 701,
     "duplicate_equipment_month_rows": 0
   },
   "canonical": {
     "path": "data/processed/session6_latest_canonical_availability.csv",
-    "sha256": "3e61c37a0c8bc5821a9f709bb58308f0121bcb2c570f753b8a311b09c8faf619",
-    "rows": 23239,
+    "sha256": "1e147c3a9ff223f24cd422fb15a821250f386a36867f78fe5695bf66d28742cc",
+    "rows": 25309,
     "columns": [
       "Month",
       "Borough",
@@ -67,8 +67,8 @@
       "Station Complex MRN"
     ],
     "start_month": "2021-01-01",
-    "end_month": "2026-04-01",
-    "equipment_count": 408,
+    "end_month": "2026-09-01",
+    "equipment_count": 419,
     "schema_matches_training_contract": true
   },
   "locked_model_path": "outputs/models/final_random_forest.joblib",
@@ -122,8 +122,8 @@
   "prospective_after_prediction_month": "2025-05-01",
   "prospective_data_available": true,
   "cohort": {
-    "rows": 3425,
-    "elevators": 346,
+    "rows": 5191,
+    "elevators": 356,
     "months": [
       "2025-06-01",
       "2025-07-01",
@@ -134,11 +134,16 @@
       "2025-12-01",
       "2026-01-01",
       "2026-02-01",
-      "2026-03-01"
+      "2026-03-01",
+      "2026-04-01",
+      "2026-05-01",
+      "2026-06-01",
+      "2026-07-01",
+      "2026-08-01"
     ],
-    "positives": 1499,
-    "negatives": 1926,
-    "prevalence": 0.43766423357664236,
+    "positives": 2246,
+    "negatives": 2945,
+    "prevalence": 0.4326719321903294,
     "rows_by_month": {
       "2025-06-01": 340,
       "2025-07-01": 340,
@@ -149,7 +154,12 @@
       "2025-12-01": 343,
       "2026-01-01": 346,
       "2026-02-01": 346,
-      "2026-03-01": 346
+      "2026-03-01": 346,
+      "2026-04-01": 348,
+      "2026-05-01": 352,
+      "2026-06-01": 354,
+      "2026-07-01": 356,
+      "2026-08-01": 356
     },
     "elevators_by_month": {
       "2025-06-01": 340,
@@ -161,62 +171,67 @@
       "2025-12-01": 343,
       "2026-01-01": 346,
       "2026-02-01": 346,
-      "2026-03-01": 346
+      "2026-03-01": 346,
+      "2026-04-01": 348,
+      "2026-05-01": 352,
+      "2026-06-01": 354,
+      "2026-07-01": 356,
+      "2026-08-01": 356
     }
   },
   "overall_metrics": {
-    "pr_auc": 0.6530076693765364,
-    "roc_auc": 0.7119943929390102,
-    "brier_score": 0.21371088654012174,
-    "precision": 0.5642781875658588,
-    "recall": 0.71447631754503,
+    "pr_auc": 0.6520723667030432,
+    "roc_auc": 0.7120589404744446,
+    "brier_score": 0.21374941399920813,
+    "precision": 0.5583878746124699,
+    "recall": 0.7217275155832591,
     "threshold": 0.4433219097353501,
-    "true_negatives": 1099,
-    "false_positives": 827,
-    "false_negatives": 428,
-    "true_positives": 1071
+    "true_negatives": 1663,
+    "false_positives": 1282,
+    "false_negatives": 625,
+    "true_positives": 1621
   },
   "calibration": {
     "bins": [
       {
         "lower": 0.0,
         "upper": 0.2,
-        "rows": 242,
-        "mean_probability": 0.10671292687852417,
-        "observed_rate": 0.07024793388429752
+        "rows": 326,
+        "mean_probability": 0.11011904305845262,
+        "observed_rate": 0.05828220858895705
       },
       {
         "lower": 0.2,
         "upper": 0.4,
-        "rows": 983,
-        "mean_probability": 0.32921872473003577,
-        "observed_rate": 0.29399796541200407
+        "rows": 1485,
+        "mean_probability": 0.331016712101492,
+        "observed_rate": 0.28888888888888886
       },
       {
         "lower": 0.4,
         "upper": 0.6000000000000001,
-        "rows": 1262,
-        "mean_probability": 0.4940565176762159,
-        "observed_rate": 0.43898573692551507
+        "rows": 1988,
+        "mean_probability": 0.49398640295954427,
+        "observed_rate": 0.43158953722334004
       },
       {
         "lower": 0.6000000000000001,
         "upper": 0.8,
-        "rows": 755,
-        "mean_probability": 0.6894413013880455,
-        "observed_rate": 0.6503311258278146
+        "rows": 1125,
+        "mean_probability": 0.6887502563921811,
+        "observed_rate": 0.6426666666666667
       },
       {
         "lower": 0.8,
         "upper": 1.0,
-        "rows": 183,
-        "mean_probability": 0.8503888503654259,
-        "observed_rate": 0.8087431693989071
+        "rows": 267,
+        "mean_probability": 0.8508184509518522,
+        "observed_rate": 0.8127340823970037
       }
     ],
-    "expected_calibration_error": 0.043823416696776564,
-    "mean_probability": 0.48148765027341883,
-    "observed_prevalence": 0.43766423357664236
+    "expected_calibration_error": 0.05114932757401146,
+    "mean_probability": 0.4838212597643409,
+    "observed_prevalence": 0.4326719321903294
   },
   "metrics_by_month": {
     "2025-06-01": {
@@ -247,32 +262,32 @@
             "lower": 0.2,
             "upper": 0.4,
             "rows": 105,
-            "mean_probability": 0.3241608656440108,
+            "mean_probability": 0.32416086564401075,
             "observed_rate": 0.22857142857142856
           },
           {
             "lower": 0.4,
             "upper": 0.6000000000000001,
             "rows": 117,
-            "mean_probability": 0.4981381877464542,
+            "mean_probability": 0.498138187746454,
             "observed_rate": 0.47863247863247865
           },
           {
             "lower": 0.6000000000000001,
             "upper": 0.8,
             "rows": 78,
-            "mean_probability": 0.6908741707324635,
+            "mean_probability": 0.6908741707324636,
             "observed_rate": 0.5769230769230769
           },
           {
             "lower": 0.8,
             "upper": 1.0,
             "rows": 14,
-            "mean_probability": 0.8704905959900175,
+            "mean_probability": 0.8704905959900174,
             "observed_rate": 0.7142857142857143
           }
         ],
-        "expected_calibration_error": 0.07046795243799513,
+        "expected_calibration_error": 0.07046795243799509,
         "mean_probability": 0.4734091289085834,
         "observed_prevalence": 0.40294117647058825
       }
@@ -370,7 +385,7 @@
             "lower": 0.4,
             "upper": 0.6000000000000001,
             "rows": 129,
-            "mean_probability": 0.4828042620227332,
+            "mean_probability": 0.48280426202273313,
             "observed_rate": 0.4496124031007752
           },
           {
@@ -388,7 +403,7 @@
             "observed_rate": 0.7647058823529411
           }
         ],
-        "expected_calibration_error": 0.03359476044533666,
+        "expected_calibration_error": 0.03359476044533664,
         "mean_probability": 0.4547439177782431,
         "observed_prevalence": 0.4222873900293255
       }
@@ -516,7 +531,7 @@
       "prevalence": 0.4662756598240469,
       "pr_auc": 0.6957299293475274,
       "roc_auc": 0.7232013269749119,
-      "brier_score": 0.21036417056408083,
+      "brier_score": 0.21036417056408085,
       "precision": 0.583756345177665,
       "recall": 0.7232704402515723,
       "threshold": 0.4433219097353501,
@@ -544,7 +559,7 @@
             "lower": 0.4,
             "upper": 0.6000000000000001,
             "rows": 129,
-            "mean_probability": 0.49542132665489963,
+            "mean_probability": 0.4954213266548997,
             "observed_rate": 0.4108527131782946
           },
           {
@@ -562,7 +577,7 @@
             "observed_rate": 0.8571428571428571
           }
         ],
-        "expected_calibration_error": 0.05387318946155655,
+        "expected_calibration_error": 0.05387318946155657,
         "mean_probability": 0.4845026627299306,
         "observed_prevalence": 0.4662756598240469
       }
@@ -616,11 +631,11 @@
             "lower": 0.8,
             "upper": 1.0,
             "rows": 23,
-            "mean_probability": 0.848633295668263,
+            "mean_probability": 0.8486332956682631,
             "observed_rate": 0.9565217391304348
           }
         ],
-        "expected_calibration_error": 0.02883115358777668,
+        "expected_calibration_error": 0.028831153587776673,
         "mean_probability": 0.49319444874636287,
         "observed_prevalence": 0.4897959183673469
       }
@@ -704,7 +719,7 @@
             "lower": 0.0,
             "upper": 0.2,
             "rows": 26,
-            "mean_probability": 0.10731392577379244,
+            "mean_probability": 0.10731392577379242,
             "observed_rate": 0.038461538461538464
           },
           {
@@ -748,7 +763,7 @@
       "prevalence": 0.3930635838150289,
       "pr_auc": 0.612018968269317,
       "roc_auc": 0.6774159663865547,
-      "brier_score": 0.22570968753744564,
+      "brier_score": 0.2257096875374456,
       "precision": 0.46733668341708545,
       "recall": 0.6838235294117647,
       "threshold": 0.4433219097353501,
@@ -762,7 +777,7 @@
             "lower": 0.0,
             "upper": 0.2,
             "rows": 24,
-            "mean_probability": 0.0932672629512331,
+            "mean_probability": 0.09326726295123307,
             "observed_rate": 0.16666666666666666
           },
           {
@@ -798,6 +813,296 @@
         "mean_probability": 0.4915053426200371,
         "observed_prevalence": 0.3930635838150289
       }
+    },
+    "2026-04-01": {
+      "rows": 348,
+      "elevators": 348,
+      "positives": 143,
+      "prevalence": 0.4109195402298851,
+      "pr_auc": 0.6677799743158986,
+      "roc_auc": 0.722309397919154,
+      "brier_score": 0.20978209395417205,
+      "precision": 0.541871921182266,
+      "recall": 0.7692307692307693,
+      "threshold": 0.4433219097353501,
+      "true_negatives": 112,
+      "false_positives": 93,
+      "false_negatives": 33,
+      "true_positives": 110,
+      "calibration": {
+        "bins": [
+          {
+            "lower": 0.0,
+            "upper": 0.2,
+            "rows": 20,
+            "mean_probability": 0.1364323519034664,
+            "observed_rate": 0.0
+          },
+          {
+            "lower": 0.2,
+            "upper": 0.4,
+            "rows": 88,
+            "mean_probability": 0.33177725752477544,
+            "observed_rate": 0.2840909090909091
+          },
+          {
+            "lower": 0.4,
+            "upper": 0.6000000000000001,
+            "rows": 153,
+            "mean_probability": 0.49220584450030386,
+            "observed_rate": 0.3790849673202614
+          },
+          {
+            "lower": 0.6000000000000001,
+            "upper": 0.8,
+            "rows": 72,
+            "mean_probability": 0.6842883469682337,
+            "observed_rate": 0.6388888888888888
+          },
+          {
+            "lower": 0.8,
+            "upper": 1.0,
+            "rows": 15,
+            "mean_probability": 0.861300339584987,
+            "observed_rate": 0.9333333333333333
+          }
+        ],
+        "expected_calibration_error": 0.08213159711705197,
+        "mean_probability": 0.4868413965065623,
+        "observed_prevalence": 0.4109195402298851
+      }
+    },
+    "2026-05-01": {
+      "rows": 352,
+      "elevators": 352,
+      "positives": 156,
+      "prevalence": 0.4431818181818182,
+      "pr_auc": 0.6149005891522036,
+      "roc_auc": 0.6807299843014128,
+      "brier_score": 0.22405268758136526,
+      "precision": 0.542713567839196,
+      "recall": 0.6923076923076923,
+      "threshold": 0.4433219097353501,
+      "true_negatives": 105,
+      "false_positives": 91,
+      "false_negatives": 48,
+      "true_positives": 108,
+      "calibration": {
+        "bins": [
+          {
+            "lower": 0.0,
+            "upper": 0.2,
+            "rows": 20,
+            "mean_probability": 0.13607336463492542,
+            "observed_rate": 0.05
+          },
+          {
+            "lower": 0.2,
+            "upper": 0.4,
+            "rows": 103,
+            "mean_probability": 0.3422509202074877,
+            "observed_rate": 0.32038834951456313
+          },
+          {
+            "lower": 0.4,
+            "upper": 0.6000000000000001,
+            "rows": 141,
+            "mean_probability": 0.4938942474907824,
+            "observed_rate": 0.48226950354609927
+          },
+          {
+            "lower": 0.6000000000000001,
+            "upper": 0.8,
+            "rows": 74,
+            "mean_probability": 0.6873121775006967,
+            "observed_rate": 0.6081081081081081
+          },
+          {
+            "lower": 0.8,
+            "upper": 1.0,
+            "rows": 14,
+            "mean_probability": 0.8553447937621689,
+            "observed_rate": 0.6428571428571429
+          }
+        ],
+        "expected_calibration_error": 0.041046389823840866,
+        "mean_probability": 0.48422820800565897,
+        "observed_prevalence": 0.4431818181818182
+      }
+    },
+    "2026-06-01": {
+      "rows": 354,
+      "elevators": 354,
+      "positives": 163,
+      "prevalence": 0.4604519774011299,
+      "pr_auc": 0.6524302594126314,
+      "roc_auc": 0.6794237625670511,
+      "brier_score": 0.22241687223149323,
+      "precision": 0.5769230769230769,
+      "recall": 0.7361963190184049,
+      "threshold": 0.4433219097353501,
+      "true_negatives": 103,
+      "false_positives": 88,
+      "false_negatives": 43,
+      "true_positives": 120,
+      "calibration": {
+        "bins": [
+          {
+            "lower": 0.0,
+            "upper": 0.2,
+            "rows": 18,
+            "mean_probability": 0.10919077996646157,
+            "observed_rate": 0.05555555555555555
+          },
+          {
+            "lower": 0.2,
+            "upper": 0.4,
+            "rows": 96,
+            "mean_probability": 0.33599003651549136,
+            "observed_rate": 0.375
+          },
+          {
+            "lower": 0.4,
+            "upper": 0.6000000000000001,
+            "rows": 148,
+            "mean_probability": 0.4990318936373232,
+            "observed_rate": 0.4527027027027027
+          },
+          {
+            "lower": 0.6000000000000001,
+            "upper": 0.8,
+            "rows": 76,
+            "mean_probability": 0.6879708638117566,
+            "observed_rate": 0.6052631578947368
+          },
+          {
+            "lower": 0.8,
+            "upper": 1.0,
+            "rows": 16,
+            "mean_probability": 0.8429036406440936,
+            "observed_rate": 0.8125
+          }
+        ],
+        "expected_calibration_error": 0.05180608670122028,
+        "mean_probability": 0.49110011780566754,
+        "observed_prevalence": 0.4604519774011299
+      }
+    },
+    "2026-07-01": {
+      "rows": 356,
+      "elevators": 356,
+      "positives": 152,
+      "prevalence": 0.42696629213483145,
+      "pr_auc": 0.6478795523388654,
+      "roc_auc": 0.720265737874097,
+      "brier_score": 0.21226501389047905,
+      "precision": 0.5555555555555556,
+      "recall": 0.7236842105263158,
+      "threshold": 0.4433219097353501,
+      "true_negatives": 116,
+      "false_positives": 88,
+      "false_negatives": 42,
+      "true_positives": 110,
+      "calibration": {
+        "bins": [
+          {
+            "lower": 0.0,
+            "upper": 0.2,
+            "rows": 14,
+            "mean_probability": 0.09673494162689471,
+            "observed_rate": 0.0
+          },
+          {
+            "lower": 0.2,
+            "upper": 0.4,
+            "rows": 104,
+            "mean_probability": 0.33246552397785567,
+            "observed_rate": 0.25
+          },
+          {
+            "lower": 0.4,
+            "upper": 0.6000000000000001,
+            "rows": 148,
+            "mean_probability": 0.4906734372970259,
+            "observed_rate": 0.44594594594594594
+          },
+          {
+            "lower": 0.6000000000000001,
+            "upper": 0.8,
+            "rows": 71,
+            "mean_probability": 0.6890295422974269,
+            "observed_rate": 0.6338028169014085
+          },
+          {
+            "lower": 0.8,
+            "upper": 1.0,
+            "rows": 19,
+            "mean_probability": 0.8523904495138206,
+            "observed_rate": 0.7894736842105263
+          }
+        ],
+        "expected_calibration_error": 0.060862046180655174,
+        "mean_probability": 0.48782833831548666,
+        "observed_prevalence": 0.42696629213483145
+      }
+    },
+    "2026-08-01": {
+      "rows": 356,
+      "elevators": 356,
+      "positives": 133,
+      "prevalence": 0.37359550561797755,
+      "pr_auc": 0.6947810161466003,
+      "roc_auc": 0.7657034964091844,
+      "brier_score": 0.2006763742424737,
+      "precision": 0.5177664974619289,
+      "recall": 0.7669172932330827,
+      "threshold": 0.4433219097353501,
+      "true_negatives": 128,
+      "false_positives": 95,
+      "false_negatives": 31,
+      "true_positives": 102,
+      "calibration": {
+        "bins": [
+          {
+            "lower": 0.0,
+            "upper": 0.2,
+            "rows": 12,
+            "mean_probability": 0.10870351495933549,
+            "observed_rate": 0.0
+          },
+          {
+            "lower": 0.2,
+            "upper": 0.4,
+            "rows": 111,
+            "mean_probability": 0.3302532398049986,
+            "observed_rate": 0.18018018018018017
+          },
+          {
+            "lower": 0.4,
+            "upper": 0.6000000000000001,
+            "rows": 136,
+            "mean_probability": 0.49354905656734616,
+            "observed_rate": 0.33088235294117646
+          },
+          {
+            "lower": 0.6000000000000001,
+            "upper": 0.8,
+            "rows": 77,
+            "mean_probability": 0.688040397709796,
+            "observed_rate": 0.6493506493506493
+          },
+          {
+            "lower": 0.8,
+            "upper": 1.0,
+            "rows": 20,
+            "mean_probability": 0.848557889487917,
+            "observed_rate": 0.9
+          }
+        ],
+        "expected_calibration_error": 0.12385723686775812,
+        "mean_probability": 0.4916727300686477,
+        "observed_prevalence": 0.37359550561797755
+      }
     }
   },
   "frozen_test_comparison": {
@@ -810,7 +1115,7 @@
       "false_positives": 243,
       "false_negatives": 119
     },
-    "assessment": "Prospective performance is broadly consistent with the frozen-test result: PR-AUC is slightly higher, ROC-AUC is slightly lower, Brier score is slightly worse, and recall remains near the locked approximately-70% policy. Precision is higher than the frozen-test estimate, though the longer prospective window naturally contains more absolute false positives and false negatives."
+    "assessment": "Compared with the saved frozen-test estimate, prospective PR-AUC is higher (0.652072 versus 0.648004); ROC-AUC is lower (0.712059 versus 0.716806); Brier score is higher (0.213749 versus 0.209976); precision is higher (0.558388 versus 0.526316); recall is higher (0.721728 versus 0.694087). Cohort periods and sizes differ; these observations do not change the locked model."
   },
   "guardrails": {
     "frozen_test_not_rerun": true,

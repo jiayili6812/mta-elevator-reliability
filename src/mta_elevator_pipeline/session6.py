@@ -262,11 +262,15 @@ def run_session6_prospective_evaluation(config: dict) -> dict[str, object]:
     frozen = json.loads(project_path("outputs/metrics/session5_frozen_test_metrics.json").read_text(encoding="utf-8"))
     frozen_overall = frozen["overall_metrics"]
     assessment = (
-        "Prospective performance is broadly consistent with the frozen-test result: "
-        "PR-AUC is slightly higher, ROC-AUC is slightly lower, Brier score is slightly worse, "
-        "and recall remains near the locked approximately-70% policy. Precision is higher than "
-        "the frozen-test estimate, though the longer prospective window naturally contains more "
-        "absolute false positives and false negatives."
+        "Compared with the saved frozen-test estimate, prospective "
+        + "; ".join(
+            f"{name} is {'higher' if overall[key] > frozen_overall[key] else 'lower' if overall[key] < frozen_overall[key] else 'unchanged'} "
+            f"({overall[key]:.6f} versus {frozen_overall[key]:.6f})"
+            for key, name in [('pr_auc', 'PR-AUC'), ('roc_auc', 'ROC-AUC'),
+                              ('brier_score', 'Brier score'), ('precision', 'precision'),
+                              ('recall', 'recall')]
+        )
+        + ". Cohort periods and sizes differ; these observations do not change the locked model."
     )
     report.update(
         {

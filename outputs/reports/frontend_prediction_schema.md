@@ -31,6 +31,7 @@ Risk tiers are display labels only:
 - `medium`: probability >= `0.30` and < `0.4433219097353501`
 - `low`: probability < `0.30`
 
-The operational decision threshold is not changed by these tiers. May 2026
-outcomes are unavailable, so this file must not be treated as evaluated
-performance data.
+The operational decision threshold is not changed by these tiers.
+October 2026 outcomes are unavailable in the latest source data ending September 2026. This file must not be treated as evaluated
+performance data. The map's frontend handoff separately applies its public
+display cutoffs (high >= 0.65, medium >= the locked threshold, low below it).

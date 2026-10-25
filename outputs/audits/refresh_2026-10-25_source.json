@@ -1,0 +1,1684 @@
+{
+  "source_url": "https://data.ny.gov/api/views/rc78-7x78/rows.csv?accessType=DOWNLOAD",
+  "retrieved_at_utc": "2026-10-25T23:11:44.983355+00:00",
+  "sha256": "a0f37b3b18e8d3058e399af9781435bd87945ae2d6f5bfb66cb1d993aae5837d",
+  "portal_rows_updated_at_utc": "2026-10-23T15:08:37+00:00",
+  "rows": 83776,
+  "previous_rows": 81003,
+  "columns": [
+    "Month",
+    "Borough",
+    "Equipment Type",
+    "Equipment Code",
+    "Total Outages",
+    "Scheduled Outages",
+    "Unscheduled Outages",
+    "Entrapments",
+    "Time Since Major Improvement",
+    "AM Peak Availability",
+    "AM Peak Hours Available",
+    "AM Peak Total Hours",
+    "PM Peak Availability",
+    "PM Peak Hours Available",
+    "PM Peak Total Hours",
+    "24-Hour Availability",
+    "24-Hour Hours Available",
+    "24-Hour Total Hours",
+    "Station Name",
+    "Station MRN",
+    "Station Complex Name",
+    "Station Complex MRN"
+  ],
+  "previous_columns": [
+    "Month",
+    "Borough",
+    "Equipment Type",
+    "Equipment Code",
+    "Total Outages",
+    "Scheduled Outages",
+    "Unscheduled Outages",
+    "Entrapments",
+    "Time Since Major Improvement",
+    "AM Peak Availability",
+    "AM Peak Hours Available",
+    "AM Peak Total Hours",
+    "PM Peak Availability",
+    "PM Peak Hours Available",
+    "PM Peak Total Hours",
+    "24-Hour Availability",
+    "24-Hour Hours Available",
+    "24-Hour Total Hours",
+    "Station Name",
+    "Station MRN",
+    "Station Complex Name",
+    "Station Complex MRN"
+  ],
+  "dtypes": {
+    "Month": "object",
+    "Borough": "object",
+    "Equipment Type": "object",
+    "Equipment Code": "object",
+    "Total Outages": "int64",
+    "Scheduled Outages": "int64",
+    "Unscheduled Outages": "int64",
+    "Entrapments": "int64",
+    "Time Since Major Improvement": "float64",
+    "AM Peak Availability": "float64",
+    "AM Peak Hours Available": "float64",
+    "AM Peak Total Hours": "float64",
+    "PM Peak Availability": "float64",
+    "PM Peak Hours Available": "float64",
+    "PM Peak Total Hours": "float64",
+    "24-Hour Availability": "float64",
+    "24-Hour Hours Available": "float64",
+    "24-Hour Total Hours": "float64",
+    "Station Name": "object",
+    "Station MRN": "int64",
+    "Station Complex Name": "object",
+    "Station Complex MRN": "int64"
+  },
+  "previous_dtypes": {
+    "Month": "object",
+    "Borough": "object",
+    "Equipment Type": "object",
+    "Equipment Code": "object",
+    "Total Outages": "int64",
+    "Scheduled Outages": "int64",
+    "Unscheduled Outages": "int64",
+    "Entrapments": "int64",
+    "Time Since Major Improvement": "float64",
+    "AM Peak Availability": "object",
+    "AM Peak Hours Available": "float64",
+    "AM Peak Total Hours": "float64",
+    "PM Peak Availability": "object",
+    "PM Peak Hours Available": "float64",
+    "PM Peak Total Hours": "float64",
+    "24-Hour Availability": "object",
+    "24-Hour Hours Available": "float64",
+    "24-Hour Total Hours": "float64",
+    "Station Name": "object",
+    "Station MRN": "int64",
+    "Station Complex Name": "object",
+    "Station Complex MRN": "int64"
+  },
+  "portal_schema": [
+    {
+      "name": "Month",
+      "fieldName": "month",
+      "dataTypeName": "calendar_date"
+    },
+    {
+      "name": "Borough",
+      "fieldName": "borough",
+      "dataTypeName": "text"
+    },
+    {
+      "name": "Equipment Type",
+      "fieldName": "equipment_type",
+      "dataTypeName": "text"
+    },
+    {
+      "name": "Equipment Code",
+      "fieldName": "equipment_code",
+      "dataTypeName": "text"
+    },
+    {
+      "name": "Total Outages",
+      "fieldName": "total_outages",
+      "dataTypeName": "number"
+    },
+    {
+      "name": "Scheduled Outages",
+      "fieldName": "scheduled_outages",
+      "dataTypeName": "number"
+    },
+    {
+      "name": "Unscheduled Outages",
+      "fieldName": "unscheduled_outages",
+      "dataTypeName": "number"
+    },
+    {
+      "name": "Entrapments",
+      "fieldName": "entrapments",
+      "dataTypeName": "number"
+    },
+    {
+      "name": "Time Since Major Improvement",
+      "fieldName": "time_since_major_improvement",
+      "dataTypeName": "text"
+    },
+    {
+      "name": "AM Peak Availability",
+      "fieldName": "am_peak_availability",
+      "dataTypeName": "number"
+    },
+    {
+      "name": "AM Peak Hours Available",
+      "fieldName": "am_peak_hours_available",
+      "dataTypeName": "number"
+    },
+    {
+      "name": "AM Peak Total Hours",
+      "fieldName": "am_peak_total_hours",
+      "dataTypeName": "number"
+    },
+    {
+      "name": "PM Peak Availability",
+      "fieldName": "pm_peak_availability",
+      "dataTypeName": "number"
+    },
+    {
+      "name": "PM Peak Hours Available",
+      "fieldName": "pm_peak_hours_available",
+      "dataTypeName": "number"
+    },
+    {
+      "name": "PM Peak Total Hours",
+      "fieldName": "pm_peak_total_hours",
+      "dataTypeName": "number"
+    },
+    {
+      "name": "24-Hour Availability",
+      "fieldName": "_24_hour_availability",
+      "dataTypeName": "number"
+    },
+    {
+      "name": "24-Hour Hours Available",
+      "fieldName": "_24_hour_hours_available",
+      "dataTypeName": "number"
+    },
+    {
+      "name": "24-Hour Total Hours",
+      "fieldName": "_24_hour_total_hours",
+      "dataTypeName": "number"
+    },
+    {
+      "name": "Station Name",
+      "fieldName": "station_name",
+      "dataTypeName": "text"
+    },
+    {
+      "name": "Station MRN",
+      "fieldName": "station_mrn",
+      "dataTypeName": "number"
+    },
+    {
+      "name": "Station Complex Name",
+      "fieldName": "station_complex_name",
+      "dataTypeName": "text"
+    },
+    {
+      "name": "Station Complex MRN",
+      "fieldName": "station_complex_mrn",
+      "dataTypeName": "number"
+    }
+  ],
+  "missing_values": {
+    "Month": 0,
+    "Borough": 0,
+    "Equipment Type": 0,
+    "Equipment Code": 0,
+    "Total Outages": 0,
+    "Scheduled Outages": 0,
+    "Unscheduled Outages": 0,
+    "Entrapments": 0,
+    "Time Since Major Improvement": 12862,
+    "AM Peak Availability": 2602,
+    "AM Peak Hours Available": 0,
+    "AM Peak Total Hours": 0,
+    "PM Peak Availability": 2585,
+    "PM Peak Hours Available": 0,
+    "PM Peak Total Hours": 0,
+    "24-Hour Availability": 2573,
+    "24-Hour Hours Available": 0,
+    "24-Hour Total Hours": 0,
+    "Station Name": 0,
+    "Station MRN": 0,
+    "Station Complex Name": 0,
+    "Station Complex MRN": 0
+  },
+  "previous_missing_values": {
+    "Month": 0,
+    "Borough": 0,
+    "Equipment Type": 0,
+    "Equipment Code": 0,
+    "Total Outages": 0,
+    "Scheduled Outages": 0,
+    "Unscheduled Outages": 0,
+    "Entrapments": 0,
+    "Time Since Major Improvement": 12444,
+    "AM Peak Availability": 2496,
+    "AM Peak Hours Available": 0,
+    "AM Peak Total Hours": 0,
+    "PM Peak Availability": 2479,
+    "PM Peak Hours Available": 0,
+    "PM Peak Total Hours": 0,
+    "24-Hour Availability": 2467,
+    "24-Hour Hours Available": 0,
+    "24-Hour Total Hours": 0,
+    "Station Name": 0,
+    "Station MRN": 0,
+    "Station Complex Name": 0,
+    "Station Complex MRN": 0
+  },
+  "month_range": [
+    "2015-01-01",
+    "2026-09-01"
+  ],
+  "monthly_coverage": {
+    "2015-01-01": {
+      "Elevator": 260,
+      "Escalator": 225
+    },
+    "2015-02-01": {
+      "Elevator": 260,
+      "Escalator": 225
+    },
+    "2015-03-01": {
+      "Elevator": 260,
+      "Escalator": 225
+    },
+    "2015-04-01": {
+      "Elevator": 260,
+      "Escalator": 225
+    },
+    "2015-05-01": {
+      "Elevator": 260,
+      "Escalator": 225
+    },
+    "2015-06-01": {
+      "Elevator": 260,
+      "Escalator": 225
+    },
+    "2015-07-01": {
+      "Elevator": 260,
+      "Escalator": 225
+    },
+    "2015-08-01": {
+      "Elevator": 260,
+      "Escalator": 225
+    },
+    "2015-09-01": {
+      "Elevator": 264,
+      "Escalator": 234
+    },
+    "2015-10-01": {
+      "Elevator": 264,
+      "Escalator": 234
+    },
+    "2015-11-01": {
+      "Elevator": 264,
+      "Escalator": 234
+    },
+    "2015-12-01": {
+      "Elevator": 265,
+      "Escalator": 234
+    },
+    "2016-01-01": {
+      "Elevator": 265,
+      "Escalator": 234
+    },
+    "2016-02-01": {
+      "Elevator": 265,
+      "Escalator": 234
+    },
+    "2016-03-01": {
+      "Elevator": 265,
+      "Escalator": 234
+    },
+    "2016-04-01": {
+      "Elevator": 265,
+      "Escalator": 234
+    },
+    "2016-05-01": {
+      "Elevator": 265,
+      "Escalator": 234
+    },
+    "2016-06-01": {
+      "Elevator": 266,
+      "Escalator": 234
+    },
+    "2016-07-01": {
+      "Elevator": 266,
+      "Escalator": 234
+    },
+    "2016-08-01": {
+      "Elevator": 266,
+      "Escalator": 234
+    },
+    "2016-09-01": {
+      "Elevator": 267,
+      "Escalator": 233
+    },
+    "2016-10-01": {
+      "Elevator": 267,
+      "Escalator": 233
+    },
+    "2016-11-01": {
+      "Elevator": 267,
+      "Escalator": 233
+    },
+    "2016-12-01": {
+      "Elevator": 274,
+      "Escalator": 235
+    },
+    "2017-01-01": {
+      "Elevator": 284,
+      "Escalator": 267
+    },
+    "2017-02-01": {
+      "Elevator": 284,
+      "Escalator": 267
+    },
+    "2017-03-01": {
+      "Elevator": 284,
+      "Escalator": 267
+    },
+    "2017-04-01": {
+      "Elevator": 285,
+      "Escalator": 267
+    },
+    "2017-05-01": {
+      "Elevator": 285,
+      "Escalator": 267
+    },
+    "2017-06-01": {
+      "Elevator": 285,
+      "Escalator": 267
+    },
+    "2017-07-01": {
+      "Elevator": 285,
+      "Escalator": 267
+    },
+    "2017-08-01": {
+      "Elevator": 285,
+      "Escalator": 267
+    },
+    "2017-09-01": {
+      "Elevator": 285,
+      "Escalator": 267
+    },
+    "2017-10-01": {
+      "Elevator": 285,
+      "Escalator": 267
+    },
+    "2017-11-01": {
+      "Elevator": 285,
+      "Escalator": 267
+    },
+    "2017-12-01": {
+      "Elevator": 285,
+      "Escalator": 267
+    },
+    "2018-01-01": {
+      "Elevator": 287,
+      "Escalator": 267
+    },
+    "2018-02-01": {
+      "Elevator": 287,
+      "Escalator": 267
+    },
+    "2018-03-01": {
+      "Elevator": 287,
+      "Escalator": 267
+    },
+    "2018-04-01": {
+      "Elevator": 287,
+      "Escalator": 267
+    },
+    "2018-05-01": {
+      "Elevator": 287,
+      "Escalator": 267
+    },
+    "2018-06-01": {
+      "Elevator": 287,
+      "Escalator": 267
+    },
+    "2018-07-01": {
+      "Elevator": 288,
+      "Escalator": 267
+    },
+    "2018-08-01": {
+      "Elevator": 289,
+      "Escalator": 274
+    },
+    "2018-09-01": {
+      "Elevator": 300,
+      "Escalator": 275
+    },
+    "2018-10-01": {
+      "Elevator": 300,
+      "Escalator": 275
+    },
+    "2018-11-01": {
+      "Elevator": 300,
+      "Escalator": 275
+    },
+    "2018-12-01": {
+      "Elevator": 300,
+      "Escalator": 275
+    },
+    "2019-01-01": {
+      "Elevator": 300,
+      "Escalator": 275
+    },
+    "2019-02-01": {
+      "Elevator": 300,
+      "Escalator": 275
+    },
+    "2019-03-01": {
+      "Elevator": 300,
+      "Escalator": 275
+    },
+    "2019-04-01": {
+      "Elevator": 300,
+      "Escalator": 275
+    },
+    "2019-05-01": {
+      "Elevator": 300,
+      "Escalator": 275
+    },
+    "2019-06-01": {
+      "Elevator": 302,
+      "Escalator": 273
+    },
+    "2019-07-01": {
+      "Elevator": 306,
+      "Escalator": 273
+    },
+    "2019-08-01": {
+      "Elevator": 306,
+      "Escalator": 273
+    },
+    "2019-09-01": {
+      "Elevator": 306,
+      "Escalator": 273
+    },
+    "2019-10-01": {
+      "Elevator": 306,
+      "Escalator": 273
+    },
+    "2019-11-01": {
+      "Elevator": 307,
+      "Escalator": 273
+    },
+    "2019-12-01": {
+      "Elevator": 307,
+      "Escalator": 273
+    },
+    "2020-01-01": {
+      "Elevator": 307,
+      "Escalator": 273
+    },
+    "2020-02-01": {
+      "Elevator": 307,
+      "Escalator": 273
+    },
+    "2020-03-01": {
+      "Elevator": 307,
+      "Escalator": 273
+    },
+    "2020-04-01": {
+      "Elevator": 307,
+      "Escalator": 273
+    },
+    "2020-05-01": {
+      "Elevator": 307,
+      "Escalator": 273
+    },
+    "2020-06-01": {
+      "Elevator": 307,
+      "Escalator": 273
+    },
+    "2020-07-01": {
+      "Elevator": 313,
+      "Escalator": 273
+    },
+    "2020-08-01": {
+      "Elevator": 317,
+      "Escalator": 273
+    },
+    "2020-09-01": {
+      "Elevator": 319,
+      "Escalator": 274
+    },
+    "2020-10-01": {
+      "Elevator": 325,
+      "Escalator": 274
+    },
+    "2020-11-01": {
+      "Elevator": 328,
+      "Escalator": 274
+    },
+    "2020-12-01": {
+      "Elevator": 336,
+      "Escalator": 279
+    },
+    "2021-01-01": {
+      "Elevator": 336,
+      "Escalator": 279
+    },
+    "2021-02-01": {
+      "Elevator": 337,
+      "Escalator": 279
+    },
+    "2021-03-01": {
+      "Elevator": 337,
+      "Escalator": 279
+    },
+    "2021-04-01": {
+      "Elevator": 337,
+      "Escalator": 279
+    },
+    "2021-05-01": {
+      "Elevator": 340,
+      "Escalator": 279
+    },
+    "2021-06-01": {
+      "Elevator": 340,
+      "Escalator": 279
+    },
+    "2021-07-01": {
+      "Elevator": 340,
+      "Escalator": 279
+    },
+    "2021-08-01": {
+      "Elevator": 340,
+      "Escalator": 279
+    },
+    "2021-09-01": {
+      "Elevator": 340,
+      "Escalator": 279
+    },
+    "2021-10-01": {
+      "Elevator": 340,
+      "Escalator": 279
+    },
+    "2021-11-01": {
+      "Elevator": 340,
+      "Escalator": 279
+    },
+    "2021-12-01": {
+      "Elevator": 340,
+      "Escalator": 279
+    },
+    "2022-01-01": {
+      "Elevator": 343,
+      "Escalator": 279
+    },
+    "2022-02-01": {
+      "Elevator": 343,
+      "Escalator": 279
+    },
+    "2022-03-01": {
+      "Elevator": 343,
+      "Escalator": 279
+    },
+    "2022-04-01": {
+      "Elevator": 343,
+      "Escalator": 279
+    },
+    "2022-05-01": {
+      "Elevator": 346,
+      "Escalator": 279
+    },
+    "2022-06-01": {
+      "Elevator": 346,
+      "Escalator": 279
+    },
+    "2022-07-01": {
+      "Elevator": 346,
+      "Escalator": 279
+    },
+    "2022-08-01": {
+      "Elevator": 346,
+      "Escalator": 279
+    },
+    "2022-09-01": {
+      "Elevator": 346,
+      "Escalator": 279
+    },
+    "2022-10-01": {
+      "Elevator": 346,
+      "Escalator": 279
+    },
+    "2022-11-01": {
+      "Elevator": 346,
+      "Escalator": 279
+    },
+    "2022-12-01": {
+      "Elevator": 346,
+      "Escalator": 279
+    },
+    "2023-01-01": {
+      "Elevator": 347,
+      "Escalator": 279
+    },
+    "2023-02-01": {
+      "Elevator": 347,
+      "Escalator": 279
+    },
+    "2023-03-01": {
+      "Elevator": 347,
+      "Escalator": 279
+    },
+    "2023-04-01": {
+      "Elevator": 347,
+      "Escalator": 279
+    },
+    "2023-05-01": {
+      "Elevator": 347,
+      "Escalator": 279
+    },
+    "2023-06-01": {
+      "Elevator": 347,
+      "Escalator": 279
+    },
+    "2023-07-01": {
+      "Elevator": 350,
+      "Escalator": 279
+    },
+    "2023-08-01": {
+      "Elevator": 352,
+      "Escalator": 279
+    },
+    "2023-09-01": {
+      "Elevator": 355,
+      "Escalator": 279
+    },
+    "2023-10-01": {
+      "Elevator": 355,
+      "Escalator": 279
+    },
+    "2023-11-01": {
+      "Elevator": 358,
+      "Escalator": 279
+    },
+    "2023-12-01": {
+      "Elevator": 360,
+      "Escalator": 279
+    },
+    "2024-01-01": {
+      "Elevator": 362,
+      "Escalator": 279
+    },
+    "2024-02-01": {
+      "Elevator": 365,
+      "Escalator": 279
+    },
+    "2024-03-01": {
+      "Elevator": 365,
+      "Escalator": 279
+    },
+    "2024-04-01": {
+      "Elevator": 371,
+      "Escalator": 279
+    },
+    "2024-05-01": {
+      "Elevator": 371,
+      "Escalator": 279
+    },
+    "2024-06-01": {
+      "Elevator": 371,
+      "Escalator": 279
+    },
+    "2024-07-01": {
+      "Elevator": 371,
+      "Escalator": 279
+    },
+    "2024-08-01": {
+      "Elevator": 374,
+      "Escalator": 279
+    },
+    "2024-09-01": {
+      "Elevator": 374,
+      "Escalator": 279
+    },
+    "2024-10-01": {
+      "Elevator": 374,
+      "Escalator": 279
+    },
+    "2024-11-01": {
+      "Elevator": 376,
+      "Escalator": 279
+    },
+    "2024-12-01": {
+      "Elevator": 385,
+      "Escalator": 279
+    },
+    "2025-01-01": {
+      "Elevator": 390,
+      "Escalator": 279
+    },
+    "2025-02-01": {
+      "Elevator": 390,
+      "Escalator": 279
+    },
+    "2025-03-01": {
+      "Elevator": 391,
+      "Escalator": 279
+    },
+    "2025-04-01": {
+      "Elevator": 392,
+      "Escalator": 279
+    },
+    "2025-05-01": {
+      "Elevator": 392,
+      "Escalator": 279
+    },
+    "2025-06-01": {
+      "Elevator": 392,
+      "Escalator": 279
+    },
+    "2025-07-01": {
+      "Elevator": 394,
+      "Escalator": 278
+    },
+    "2025-08-01": {
+      "Elevator": 397,
+      "Escalator": 278
+    },
+    "2025-09-01": {
+      "Elevator": 397,
+      "Escalator": 278
+    },
+    "2025-10-01": {
+      "Elevator": 397,
+      "Escalator": 278
+    },
+    "2025-11-01": {
+      "Elevator": 399,
+      "Escalator": 278
+    },
+    "2025-12-01": {
+      "Elevator": 403,
+      "Escalator": 278
+    },
+    "2026-01-01": {
+      "Elevator": 405,
+      "Escalator": 278
+    },
+    "2026-02-01": {
+      "Elevator": 407,
+      "Escalator": 278
+    },
+    "2026-03-01": {
+      "Elevator": 407,
+      "Escalator": 278
+    },
+    "2026-04-01": {
+      "Elevator": 408,
+      "Escalator": 278
+    },
+    "2026-05-01": {
+      "Elevator": 409,
+      "Escalator": 278
+    },
+    "2026-06-01": {
+      "Elevator": 413,
+      "Escalator": 278
+    },
+    "2026-07-01": {
+      "Elevator": 413,
+      "Escalator": 278
+    },
+    "2026-08-01": {
+      "Elevator": 416,
+      "Escalator": 278
+    },
+    "2026-09-01": {
+      "Elevator": 419,
+      "Escalator": 278
+    }
+  },
+  "all_source_validation": {
+    "rows": 83776,
+    "equipment": 701,
+    "start_month": "2015-01-01",
+    "end_month": "2026-09-01",
+    "nonconsecutive_transitions": 0,
+    "missing_values": {
+      "Month": 0,
+      "Borough": 0,
+      "Equipment Type": 0,
+      "Equipment Code": 0,
+      "Total Outages": 0,
+      "Scheduled Outages": 0,
+      "Unscheduled Outages": 0,
+      "Entrapments": 0,
+      "Time Since Major Improvement": 12862,
+      "AM Peak Availability": 2602,
+      "AM Peak Hours Available": 0,
+      "AM Peak Total Hours": 0,
+      "PM Peak Availability": 2585,
+      "PM Peak Hours Available": 0,
+      "PM Peak Total Hours": 0,
+      "24-Hour Availability": 2573,
+      "24-Hour Hours Available": 0,
+      "24-Hour Total Hours": 0,
+      "Station Name": 0,
+      "Station MRN": 0,
+      "Station Complex Name": 0,
+      "Station Complex MRN": 0
+    },
+    "equipment_history_months": {
+      "minimum": 1,
+      "median": 141.0,
+      "maximum": 141
+    }
+  },
+  "numeric_ranges": {
+    "Total Outages": {
+      "min": 0.0,
+      "max": 91.0,
+      "infinite": 0
+    },
+    "Scheduled Outages": {
+      "min": 0.0,
+      "max": 35.0,
+      "infinite": 0
+    },
+    "Unscheduled Outages": {
+      "min": 0.0,
+      "max": 86.0,
+      "infinite": 0
+    },
+    "Entrapments": {
+      "min": 0.0,
+      "max": 12.0,
+      "infinite": 0
+    },
+    "Time Since Major Improvement": {
+      "min": 1.0,
+      "max": 1455.0,
+      "infinite": 0
+    },
+    "AM Peak Availability": {
+      "min": 0.0,
+      "max": 1.0,
+      "infinite": 0
+    },
+    "AM Peak Hours Available": {
+      "min": 0.0,
+      "max": 124.0,
+      "infinite": 0
+    },
+    "AM Peak Total Hours": {
+      "min": 0.0,
+      "max": 124.0,
+      "infinite": 0
+    },
+    "PM Peak Availability": {
+      "min": 0.0,
+      "max": 1.0,
+      "infinite": 0
+    },
+    "PM Peak Hours Available": {
+      "min": 0.0,
+      "max": 124.0,
+      "infinite": 0
+    },
+    "PM Peak Total Hours": {
+      "min": 0.0,
+      "max": 124.0,
+      "infinite": 0
+    },
+    "24-Hour Availability": {
+      "min": 0.0,
+      "max": 1.0,
+      "infinite": 0
+    },
+    "24-Hour Hours Available": {
+      "min": 0.0,
+      "max": 744.0,
+      "infinite": 0
+    },
+    "24-Hour Total Hours": {
+      "min": 0.0,
+      "max": 744.0,
+      "infinite": 0
+    },
+    "Station MRN": {
+      "min": 2.0,
+      "max": 477.0,
+      "infinite": 0
+    },
+    "Station Complex MRN": {
+      "min": 2.0,
+      "max": 636.0,
+      "infinite": 0
+    }
+  },
+  "fractional_counts": {
+    "Total Outages": 0,
+    "Scheduled Outages": 0,
+    "Unscheduled Outages": 0,
+    "Entrapments": 0
+  },
+  "hours_checks": {
+    "AM Peak": {
+      "negative": 0,
+      "available_exceeds_total": 0,
+      "ratio_mismatch": 0
+    },
+    "PM Peak": {
+      "negative": 0,
+      "available_exceeds_total": 0,
+      "ratio_mismatch": 0
+    },
+    "24-Hour": {
+      "negative": 0,
+      "available_exceeds_total": 0,
+      "ratio_mismatch": 0
+    }
+  },
+  "historical_revisions": {
+    "common_rows": 81003,
+    "removed_keys": 0,
+    "changed_rows": 78536,
+    "changed_cells_by_column": {
+      "Borough": 0,
+      "Equipment Type": 0,
+      "Total Outages": 0,
+      "Scheduled Outages": 0,
+      "Unscheduled Outages": 0,
+      "Entrapments": 0,
+      "Time Since Major Improvement": 0,
+      "AM Peak Availability": 78507,
+      "AM Peak Hours Available": 34308,
+      "AM Peak Total Hours": 4623,
+      "PM Peak Availability": 78524,
+      "PM Peak Hours Available": 35110,
+      "PM Peak Total Hours": 4535,
+      "24-Hour Availability": 78536,
+      "24-Hour Hours Available": 51772,
+      "24-Hour Total Hours": 1567,
+      "Station Name": 0,
+      "Station MRN": 0,
+      "Station Complex Name": 0,
+      "Station Complex MRN": 0
+    }
+  },
+  "normalized_historical_revisions": {
+    "Borough": {
+      "changed": 0
+    },
+    "Equipment Type": {
+      "changed": 0
+    },
+    "Total Outages": {
+      "changed_above_1e-9": 0,
+      "max_absolute_delta": 0.0
+    },
+    "Scheduled Outages": {
+      "changed_above_1e-9": 0,
+      "max_absolute_delta": 0.0
+    },
+    "Unscheduled Outages": {
+      "changed_above_1e-9": 0,
+      "max_absolute_delta": 0.0
+    },
+    "Entrapments": {
+      "changed_above_1e-9": 0,
+      "max_absolute_delta": 0.0
+    },
+    "Time Since Major Improvement": {
+      "changed_above_1e-9": 0,
+      "max_absolute_delta": 0.0
+    },
+    "AM Peak Availability": {
+      "changed_above_1e-9": 0,
+      "max_absolute_delta": 5.007105841059456e-14
+    },
+    "AM Peak Hours Available": {
+      "changed_above_1e-9": 0,
+      "max_absolute_delta": 3.382183422218077e-12
+    },
+    "AM Peak Total Hours": {
+      "changed_above_1e-9": 0,
+      "max_absolute_delta": 3.367972567502875e-12
+    },
+    "PM Peak Availability": {
+      "changed_above_1e-9": 0,
+      "max_absolute_delta": 5.007105841059456e-14
+    },
+    "PM Peak Hours Available": {
+      "changed_above_1e-9": 0,
+      "max_absolute_delta": 3.382183422218077e-12
+    },
+    "PM Peak Total Hours": {
+      "changed_above_1e-9": 0,
+      "max_absolute_delta": 3.367972567502875e-12
+    },
+    "24-Hour Availability": {
+      "changed_above_1e-9": 0,
+      "max_absolute_delta": 5.007105841059456e-14
+    },
+    "24-Hour Hours Available": {
+      "changed_above_1e-9": 0,
+      "max_absolute_delta": 3.524291969370097e-12
+    },
+    "24-Hour Total Hours": {
+      "changed_above_1e-9": 0,
+      "max_absolute_delta": 3.524291969370097e-12
+    },
+    "Station Name": {
+      "changed": 0
+    },
+    "Station MRN": {
+      "changed_above_1e-9": 0,
+      "max_absolute_delta": 0.0
+    },
+    "Station Complex Name": {
+      "changed": 0
+    },
+    "Station Complex MRN": {
+      "changed_above_1e-9": 0,
+      "max_absolute_delta": 0.0
+    }
+  },
+  "latest_equipment_types": {
+    "Elevator": 419,
+    "Escalator": 278
+  },
+  "latest_missing_values": {
+    "Month": 0,
+    "Borough": 0,
+    "Equipment Type": 0,
+    "Equipment Code": 0,
+    "Total Outages": 0,
+    "Scheduled Outages": 0,
+    "Unscheduled Outages": 0,
+    "Entrapments": 0,
+    "Time Since Major Improvement": 105,
+    "AM Peak Availability": 20,
+    "AM Peak Hours Available": 0,
+    "AM Peak Total Hours": 0,
+    "PM Peak Availability": 20,
+    "PM Peak Hours Available": 0,
+    "PM Peak Total Hours": 0,
+    "24-Hour Availability": 20,
+    "24-Hour Hours Available": 0,
+    "24-Hour Total Hours": 0,
+    "Station Name": 0,
+    "Station MRN": 0,
+    "Station Complex Name": 0,
+    "Station Complex MRN": 0
+  },
+  "missing_availability_explanation": {
+    "AM Peak": "All 2602 missing proportions have zero total and available hours (undefined 0/0). Retained for locked preprocessing.",
+    "PM Peak": "All 2585 missing proportions have zero total and available hours (undefined 0/0). Retained for locked preprocessing.",
+    "24-Hour": "All 2573 missing proportions have zero total and available hours (undefined 0/0). Retained for locked preprocessing."
+  },
+  "latest_hours_distribution": {
+    "AM Peak Total Hours": {
+      "120.0": 565,
+      "119.99999999999996": 89,
+      "0.0": 20,
+      "120.00000000000004": 12,
+      "60.0": 2,
+      "4.0": 2,
+      "27.999999999999996": 1,
+      "80.0": 1,
+      "117.25": 1,
+      "116.0": 1,
+      "71.58333333333333": 1,
+      "64.75": 1,
+      "118.61666666666667": 1
+    },
+    "PM Peak Total Hours": {
+      "120.0": 567,
+      "119.99999999999996": 88,
+      "0.0": 20,
+      "120.00000000000004": 12,
+      "60.0": 2,
+      "32.0": 1,
+      "80.0": 1,
+      "118.66666666666669": 1,
+      "119.91666666666666": 1,
+      "4.833333333333333": 1,
+      "69.99999999999999": 1,
+      "64.08333333333333": 1,
+      "4.683333333333333": 1
+    },
+    "24-Hour Total Hours": {
+      "720.0": 665,
+      "0.0": 20,
+      "363.41666666666663": 2,
+      "178.66666666666669": 1,
+      "480.0": 1,
+      "710.25": 1,
+      "701.1666666666667": 1,
+      "715.4166666666667": 1,
+      "29.833333333333336": 1,
+      "423.91666666666663": 1,
+      "403.91666666666663": 1,
+      "716.2833333333333": 1,
+      "29.683333333333337": 1
+    }
+  },
+  "elevator_roster_changes": {
+    "added": [
+      "EL100",
+      "EL101",
+      "EL102",
+      "EL487",
+      "EL488",
+      "EL620",
+      "EL621",
+      "EL795",
+      "EL796",
+      "EL797"
+    ],
+    "removed": []
+  },
+  "escalator_roster_changes": {
+    "added": [],
+    "removed": []
+  },
+  "latest_context_changes": {
+    "Equipment Type": [],
+    "Station Name": [],
+    "Station MRN": [],
+    "Station Complex Name": [],
+    "Station Complex MRN": [],
+    "Borough": []
+  },
+  "canonical_validation": {
+    "rows": 25309,
+    "equipment": 419,
+    "start_month": "2021-01-01",
+    "end_month": "2026-09-01",
+    "nonconsecutive_transitions": 0,
+    "missing_values": {
+      "Month": 0,
+      "Borough": 0,
+      "Equipment Type": 0,
+      "Equipment Code": 0,
+      "Total Outages": 0,
+      "Scheduled Outages": 0,
+      "Unscheduled Outages": 0,
+      "Entrapments": 0,
+      "Time Since Major Improvement": 3535,
+      "AM Peak Availability": 989,
+      "AM Peak Hours Available": 0,
+      "AM Peak Total Hours": 0,
+      "PM Peak Availability": 981,
+      "PM Peak Hours Available": 0,
+      "PM Peak Total Hours": 0,
+      "24-Hour Availability": 975,
+      "24-Hour Hours Available": 0,
+      "24-Hour Total Hours": 0,
+      "Station Name": 0,
+      "Station MRN": 0,
+      "Station Complex Name": 0,
+      "Station Complex MRN": 0
+    },
+    "equipment_history_months": {
+      "minimum": 1,
+      "median": 69.0,
+      "maximum": 69
+    }
+  },
+  "latest_elevator_missing_by_eligibility": {
+    "excluded_equipment_suffix": {
+      "AM Peak Availability": 0,
+      "PM Peak Availability": 0,
+      "24-Hour Availability": 0,
+      "Time Since Major Improvement": 51
+    },
+    "insufficient_history": {
+      "AM Peak Availability": 0,
+      "PM Peak Availability": 0,
+      "24-Hour Availability": 0,
+      "Time Since Major Improvement": 4
+    },
+    "scored": {
+      "AM Peak Availability": 6,
+      "PM Peak Availability": 6,
+      "24-Hour Availability": 6,
+      "Time Since Major Improvement": 2
+    }
+  },
+  "latest_eligibility": {
+    "scored": 357,
+    "excluded_equipment_suffix": 51,
+    "insufficient_history": 11
+  },
+  "excluded_equipment": [
+    {
+      "Equipment Code": "EL100",
+      "Station Name": "149ST-HOSTOS-JER-4",
+      "Station Complex MRN": 603,
+      "consecutive_history_months": 1,
+      "reason": "insufficient_history"
+    },
+    {
+      "Equipment Code": "EL101",
+      "Station Name": "149ST-HOSTOS-JER-4",
+      "Station Complex MRN": 603,
+      "consecutive_history_months": 1,
+      "reason": "insufficient_history"
+    },
+    {
+      "Equipment Code": "EL102",
+      "Station Name": "149ST-HOSTOS-JER-4",
+      "Station Complex MRN": 603,
+      "consecutive_history_months": 1,
+      "reason": "insufficient_history"
+    },
+    {
+      "Equipment Code": "EL11X",
+      "Station Name": "CORTLANDTST-7AV-1",
+      "Station Complex MRN": 328,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL12X",
+      "Station Name": "CORTLANDTST-7AV-1",
+      "Station Complex MRN": 328,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL13X",
+      "Station Name": "CORTLANDTST-7AV-1",
+      "Station Complex MRN": 328,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL14X",
+      "Station Name": "CORTLANDTST-7AV-1",
+      "Station Complex MRN": 328,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL16X",
+      "Station Name": "CORTLANDTST-BWY-R",
+      "Station Complex MRN": 624,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL17X",
+      "Station Name": "CORTLANDTST-BWY-R",
+      "Station Complex MRN": 624,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL18X",
+      "Station Name": "CORTLANDTST-BWY-R",
+      "Station Complex MRN": 624,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL200X",
+      "Station Name": "34ST-HERALDSQ-BWY-M/N/R/Q",
+      "Station Complex MRN": 607,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL203X",
+      "Station Name": "LEXINGTONAV/53ST-QBL-E/M",
+      "Station Complex MRN": 612,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL207X",
+      "Station Name": "50ST-8AV-C/E",
+      "Station Complex MRN": 162,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL208X",
+      "Station Name": "50ST-8AV-C/E",
+      "Station Complex MRN": 162,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL22X",
+      "Station Name": "CORTLANDTST-BWY-R",
+      "Station Complex MRN": 624,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL231X",
+      "Station Name": "TIMESSQ-42ST-7AV-1/2/3",
+      "Station Complex MRN": 611,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL23X",
+      "Station Name": "WORLDTRADECENTER-8AV-E",
+      "Station Complex MRN": 624,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL268X",
+      "Station Name": "49ST-BWY-N/R/Q",
+      "Station Complex MRN": 10,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL276X",
+      "Station Name": "59ST-COLUMBUSCIRCLE-8AV-A/B/C/D",
+      "Station Complex MRN": 614,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL279X",
+      "Station Name": "28ST-LEX-6",
+      "Station Complex MRN": 404,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL287X",
+      "Station Name": "42ST-BRYANTPK-6AV-B/D/F/M",
+      "Station Complex MRN": 609,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL288X",
+      "Station Name": "42ST/PORTAUTHORITY-BUSTERMINAL-8AV-A/C/E",
+      "Station Complex MRN": 611,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL289X",
+      "Station Name": "42ST/PORTAUTHORITY-BUSTERMINAL-8AV-A/C/E",
+      "Station Complex MRN": 611,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL290X",
+      "Station Name": "42ST/PORTAUTHORITY-BUSTERMINAL-8AV-A/C/E",
+      "Station Complex MRN": 611,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL291X",
+      "Station Name": "42ST/PORTAUTHORITY-BUSTERMINAL-8AV-A/C/E",
+      "Station Complex MRN": 611,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL294X",
+      "Station Name": "42ST-BRYANTPK-6AV-B/D/F/M",
+      "Station Complex MRN": 609,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL295X",
+      "Station Name": "42ST-BRYANTPK-6AV-B/D/F/M",
+      "Station Complex MRN": 609,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL327X",
+      "Station Name": "JAYST-METROTECH-BWY-R",
+      "Station Complex MRN": 636,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL445X",
+      "Station Name": "COURTSQ-FLS-7",
+      "Station Complex MRN": 606,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL448X",
+      "Station Name": "SUTPHINBLVD-ARCHERAV-JFKAIRPORT-QBL-E/J/Z",
+      "Station Complex MRN": 279,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL449X",
+      "Station Name": "SUTPHINBLVD-ARCHERAV-JFKAIRPORT-QBL-E/J/Z",
+      "Station Complex MRN": 279,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL450X",
+      "Station Name": "SUTPHINBLVD-ARCHERAV-JFKAIRPORT-QBL-E/J/Z",
+      "Station Complex MRN": 279,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL482X",
+      "Station Name": "COURTSQ-23ST-QBL-E/M",
+      "Station Complex MRN": 606,
+      "consecutive_history_months": 68,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL487",
+      "Station Name": "ROCKAWAYBLVD-LIB-A",
+      "Station Complex MRN": 192,
+      "consecutive_history_months": 4,
+      "reason": "insufficient_history"
+    },
+    {
+      "Equipment Code": "EL488",
+      "Station Name": "ROCKAWAYBLVD-LIB-A",
+      "Station Complex MRN": 192,
+      "consecutive_history_months": 4,
+      "reason": "insufficient_history"
+    },
+    {
+      "Equipment Code": "EL489X",
+      "Station Name": "AQUEDUCT-RACETRACK-RKY-A",
+      "Station Complex MRN": 196,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL490X",
+      "Station Name": "HOWARDBEACH-JFKAIRPORT-RKY-A",
+      "Station Complex MRN": 198,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL491X",
+      "Station Name": "HOWARDBEACH-JFKAIRPORT-RKY-A",
+      "Station Complex MRN": 198,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL492X",
+      "Station Name": "HOWARDBEACH-JFKAIRPORT-RKY-A",
+      "Station Complex MRN": 198,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL493X",
+      "Station Name": "HOWARDBEACH-JFKAIRPORT-RKY-A",
+      "Station Complex MRN": 198,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL494X",
+      "Station Name": "HOWARDBEACH-JFKAIRPORT-RKY-A",
+      "Station Complex MRN": 198,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL495X",
+      "Station Name": "HOWARDBEACH-JFKAIRPORT-RKY-A",
+      "Station Complex MRN": 198,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL519",
+      "Station Name": "137ST-CITYCOLLEGE-BWY7-1",
+      "Station Complex MRN": 305,
+      "consecutive_history_months": 5,
+      "reason": "insufficient_history"
+    },
+    {
+      "Equipment Code": "EL606X",
+      "Station Name": "GRANDCENTRAL-42ST-LEX-S",
+      "Station Complex MRN": 610,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL607X",
+      "Station Name": "GRANDCENTRAL-42ST-LEX-S",
+      "Station Complex MRN": 610,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL608X",
+      "Station Name": "GRANDCENTRAL-42ST-LEX-S",
+      "Station Complex MRN": 610,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL620",
+      "Station Name": "57ST-6AV-F",
+      "Station Complex MRN": 224,
+      "consecutive_history_months": 4,
+      "reason": "insufficient_history"
+    },
+    {
+      "Equipment Code": "EL621",
+      "Station Name": "57ST-6AV-F",
+      "Station Complex MRN": 224,
+      "consecutive_history_months": 4,
+      "reason": "insufficient_history"
+    },
+    {
+      "Equipment Code": "EL700X",
+      "Station Name": "ATLANTICAV-BARCLAYSCTR-EPK-2/3/4/5",
+      "Station Complex MRN": 617,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL717X",
+      "Station Name": "FULTONST-LEX-4/5",
+      "Station Complex MRN": 628,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL718X",
+      "Station Name": "FULTONST-LEX-4/5",
+      "Station Complex MRN": 628,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL726X",
+      "Station Name": "CORTLANDTST-BWY-R",
+      "Station Complex MRN": 624,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL727X",
+      "Station Name": "CORTLANDTST-BWY-R",
+      "Station Complex MRN": 624,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL728X",
+      "Station Name": "FULTONST-LEX-4/5",
+      "Station Complex MRN": 628,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL729X",
+      "Station Name": "FULTONST-LEX-4/5",
+      "Station Complex MRN": 628,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL733X",
+      "Station Name": "FULTONST-LEX-4/5",
+      "Station Complex MRN": 628,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL744X",
+      "Station Name": "HOYTST-EPK-2/3",
+      "Station Complex MRN": 336,
+      "consecutive_history_months": 37,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL747X",
+      "Station Name": "HOYT-SCHERMERHORN-8AV-A/C/G",
+      "Station Complex MRN": 175,
+      "consecutive_history_months": 69,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL791X",
+      "Station Name": "QUEENSBOROPLAZA-FLS-7/N/Q",
+      "Station Complex MRN": 461,
+      "consecutive_history_months": 18,
+      "reason": "excluded_equipment_suffix"
+    },
+    {
+      "Equipment Code": "EL795",
+      "Station Name": "KINGSHWY-6AV-F",
+      "Station Complex MRN": 250,
+      "consecutive_history_months": 2,
+      "reason": "insufficient_history"
+    },
+    {
+      "Equipment Code": "EL796",
+      "Station Name": "KINGSHWY-6AV-F",
+      "Station Complex MRN": 250,
+      "consecutive_history_months": 2,
+      "reason": "insufficient_history"
+    },
+    {
+      "Equipment Code": "EL797",
+      "Station Name": "KINGSHWY-6AV-F",
+      "Station Complex MRN": 250,
+      "consecutive_history_months": 2,
+      "reason": "insufficient_history"
+    }
+  ]
+}
