@@ -1098,6 +1098,11 @@
     L.DomEvent.disableScrollPropagation(buttonContainer);
     markerLayers.forEach(function (item) {
       var button = buttonContainer.querySelector('[data-marker-layer="' + item.id + '"]');
+      // One-time owner request: restore this row automatically for the next forecast.
+      if (item.id === 'unscored' && data.target_month === '2026-10') {
+        button.remove();
+        return;
+      }
       button.children[1].innerHTML = item.label;
       button.addEventListener('click', function () {
         var visible = map.hasLayer(item.layer);
